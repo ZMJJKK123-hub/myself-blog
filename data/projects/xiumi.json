@@ -1,0 +1,67 @@
+{
+  "slug": "xiumi",
+  "order": 3,
+  "title": "xiumi-agent",
+  "category": "AI Agent",
+  "summary": "在终端里提出需求，让 Agent 驱动浏览器完成公众号写稿、排版与草稿保存。",
+  "tags": [
+    "Python",
+    "Textual",
+    "CDP"
+  ],
+  "status": "已有实现",
+  "updatedAt": "2026-10-26",
+  "repositoryUrl": "https://github.com/ZMJJKK123-hub/xiumi-creator",
+  "sections": [
+    {
+      "id": "section-0",
+      "title": "缘起",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "公众号内容制作涉及写稿、排版、配图和保存，希望把这串连续操作整理成一个可以通过自然语言发起的工作流。"
+        }
+      ]
+    },
+    {
+      "id": "section-1",
+      "title": "工作流",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "终端 TUI 接收任务，Agent 主循环调用插件工具，通过本机 Edge 浏览器与秀米编辑器交互，目标是完成从内容到排版草稿的过程。"
+        },
+        {
+          "kind": "code",
+          "language": "text",
+          "code": "Textual TUI → Agent + 插件 → Edge / 秀米"
+        }
+      ]
+    },
+    {
+      "id": "section-2",
+      "title": "实现方式",
+      "blocks": [
+        {
+          "kind": "list",
+          "items": [
+            "Python 与 Textual 构建终端界面。",
+            "核心循环通过 OpenAI 兼容的工具调用接口组织模型行为。",
+            "浏览器、登录和编辑器能力按插件拆分。",
+            "使用 CDP 处理截图、上传文件和真实按键等交互。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section-3",
+      "title": "维护思路",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "页面选择器集中管理，界面变化时有明确的维护位置。登录信息经专门的登录界面传递，不作为普通任务文本送入模型。实际使用仍依赖本机浏览器、网站状态与模型配置。"
+        }
+      ]
+    }
+  ]
+}

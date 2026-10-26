@@ -10,3 +10,4 @@ server/dist/
 site/**/*.js
 site/**/*.js.map
 coverage/
+.zcode/

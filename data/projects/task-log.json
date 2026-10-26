@@ -1,0 +1,71 @@
+{
+  "slug": "task-log",
+  "order": 2,
+  "title": "日志清单",
+  "category": "Web 开发",
+  "summary": "从任务和周日程出发，探索带确认、驳回与恢复预览的 AI 任务管理。",
+  "tags": [
+    "TypeScript",
+    "NestJS",
+    "AI"
+  ],
+  "status": "持续开发",
+  "updatedAt": "2026-10-26",
+  "repositoryUrl": "https://github.com/ZMJJKK123-hub/time-schedule",
+  "sections": [
+    {
+      "id": "section-0",
+      "title": "缘起",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "把日常安排从分散的记录整理成可查看、可修改的任务清单，并尝试让自然语言成为新增任务的入口。"
+        }
+      ]
+    },
+    {
+      "id": "section-1",
+      "title": "现在能做什么",
+      "blocks": [
+        {
+          "kind": "list",
+          "items": [
+            "账号登录、任务增删改查、完成切换、过滤和批量操作。",
+            "只读每日清单、周日程表和个人设置。",
+            "配置模型提供商，通过 AI 输入生成任务操作。",
+            "在邮箱式审核页面查看结果，确认或驳回，并预览恢复内容。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section-2",
+      "title": "值得记录的设计",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "人工和 AI 操作经过相同的任务规则与日志入口。每次模型运行保留操作记录，审核结果也写入日志；恢复前检查任务状态，避免直接覆盖已经发生的外部变化。"
+        },
+        {
+          "kind": "code",
+          "language": "text",
+          "code": "自然语言 → 操作与日志 → 审核 / 恢复"
+        }
+      ]
+    },
+    {
+      "id": "section-3",
+      "title": "当前边界",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "核心持久化仍为 JSON 文件，使用单一写入进程。数据库迁移、离线同步与桌面端尚属后续方向。周日程对于跨日和纯日期区间也有展示限制。"
+        },
+        {
+          "kind": "paragraph",
+          "text": "本机微信导入工具与网站独立，现阶段依赖手动打开指定会话，不代表全会话或离线消息同步能力。"
+        }
+      ]
+    }
+  ]
+}

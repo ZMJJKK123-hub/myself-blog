@@ -1,0 +1,71 @@
+{
+  "slug": "shuimu",
+  "order": 1,
+  "title": "水木科协 · 数字实验场",
+  "category": "Web 开发",
+  "summary": "面向学生的技术探索与共创空间，把科协介绍、精选推送和学习资源连接起来。",
+  "tags": [
+    "TypeScript",
+    "NestJS",
+    "Web"
+  ],
+  "status": "持续开发",
+  "updatedAt": "2026-10-26",
+  "repositoryUrl": "https://github.com/ZMJJKK123-hub/shuimu-college-web",
+  "sections": [
+    {
+      "id": "section-0",
+      "title": "缘起",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "参与水木书院学生科学技术协会网站开发，希望把科协的技术探索与内容分享放到一个清晰、可持续维护的入口里。"
+        }
+      ]
+    },
+    {
+      "id": "section-1",
+      "title": "现在能做什么",
+      "blocks": [
+        {
+          "kind": "list",
+          "items": [
+            "首页介绍科协，并展示精选推送与技术入口。",
+            "提供普通用户注册、登录和头像上传，以及独立的管理员入口。",
+            "整理学习资料与工具，保留后续业务扩展的空间。",
+            "以几何标识、深墨蓝与冰青色组织视觉，加入流线、轨道和滚动反馈。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section-2",
+      "title": "实现方式",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "采用静态门户与后端 API 配合的结构。前端以 TypeScript 编写，再编译为浏览器脚本；后端使用 NestJS。普通用户和管理员使用独立的认证路径。"
+        },
+        {
+          "kind": "code",
+          "language": "text",
+          "code": "静态门户 → 后端 API → 渐进业务"
+        }
+      ]
+    },
+    {
+      "id": "section-3",
+      "title": "开发记录",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "最近的工作集中在首页视觉和交互打磨、精选内容轮播，以及共享动效的复用。网站仍在迭代，资料页也在继续整理。"
+        },
+        {
+          "kind": "paragraph",
+          "text": "此处是项目介绍，实际能力与部署状态以项目仓库中的 README 为准。"
+        }
+      ]
+    }
+  ]
+}

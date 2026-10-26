@@ -1,0 +1,57 @@
+{
+  "slug": "valorant",
+  "order": 5,
+  "title": "Valorant 游戏资料站",
+  "category": "Web 开发",
+  "summary": "第一个 Web 项目：用 Streamlit 整理英雄、武器和游戏资料，练习完整页面开发。",
+  "tags": [
+    "Python",
+    "Streamlit",
+    "Pandas"
+  ],
+  "status": "早期作品",
+  "updatedAt": "2026-10-26",
+  "repositoryUrl": "https://github.com/ZMJJKK123-hub/Valorant-WEBSITE",
+  "sections": [
+    {
+      "id": "section-0",
+      "title": "第一个 Web 项目",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "项目 README 里写着“My first web”。从自己熟悉的游戏出发，尝试把英雄和武器资料做成可浏览的页面，也是早期探索 Web 开发的一份记录。"
+        }
+      ]
+    },
+    {
+      "id": "section-1",
+      "title": "页面内容",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "代码中包含英雄分类展示、武器卡片、图片处理、资料表读取和评论区等页面逻辑，并尝试了用户注册与本地数据保存。"
+        }
+      ]
+    },
+    {
+      "id": "section-2",
+      "title": "使用的工具",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "使用 Streamlit 快速搭建页面，Pandas 处理表格，Pillow 处理图片。视觉上围绕游戏的红色与深色背景展开。"
+        }
+      ]
+    },
+    {
+      "id": "section-3",
+      "title": "回看这个起点",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "保留这份作品，是为了记录从一个长脚本开始，到后来逐渐关注模块、类型、接口和可维护性的过程。它作为早期学习作品展示，不作为生产服务运行。"
+        }
+      ]
+    }
+  ]
+}

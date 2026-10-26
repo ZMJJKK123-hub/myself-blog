@@ -34,6 +34,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     if (!['https:', 'http:'].includes(url.protocol) || url.origin !== value) throw new Error('Invalid origin configuration');
   }
   return Object.freeze({ host: env['HOST'] ?? '127.0.0.1', port, searchLimit, requestTimeoutMs, contentMaxBytes,
-    contentDir: path.resolve(env['CONTENT_DIR'] ?? path.join(packageRoot, 'content')),
-    mediaDir: path.resolve(env['MEDIA_DIR'] ?? path.join(packageRoot, 'public/media')), origins, publicOrigin });
+    contentDir: path.resolve(env['CONTENT_DIR'] ?? path.join(packageRoot, '..', 'data')),
+    mediaDir: path.resolve(env['MEDIA_DIR'] ?? path.join(packageRoot, '..', 'data', 'media')), origins, publicOrigin });
 }

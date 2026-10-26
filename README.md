@@ -26,15 +26,19 @@ npm run start:site
 
 ## 维护内容
 
-| 文件 | 内容 |
-| --- | --- |
-| `server/content/profile.json` | 个人介绍、方向、外链、最近在做 |
-| `server/content/projects.json` | 项目摘要、状态、仓库与详情 |
-| `server/content/notes.json` | 笔记摘要、日期、正文 |
-| `server/content/life.json` | 相册元数据与校园活动文字 |
-| `server/public/media/` | 压缩且不含原照片元数据的 WebP 图片 |
+所有内容都在根目录 `data/` 下，编辑保存后刷新页面即可生效（内容在请求时读取，无需重启）：
 
-正文使用结构化内容块，不写 HTML。内容文件在请求时读取，编辑后刷新即可；字段错误会显示明确的服务错误，不会伪装成空内容。桌面原始文档和其他项目不参与运行。
+| 位置 | 内容 |
+| --- | --- |
+| `data/profile.json` | 个人介绍、方向、外链、最近在做 |
+| `data/projects/<slug>.json` | 项目档案，一个文件一个项目（文件名必须等于 slug） |
+| `data/notes/<slug>.md` | 学习笔记，一篇一个 Markdown 文件（文件名就是网址） |
+| `data/life.json` | 相册元数据与校园活动文字 |
+| `data/media/` | 压缩且不含原照片元数据的 WebP 图片 |
+
+每个文件夹都有示例文件（`_template` / `README`）；下划线开头的文件会被网站跳过，可以当草稿。Markdown 格式、字段规则和常见错误见 `data/README.md`。
+
+分类是自由的：笔记、项目、照片里写任何新类别，页面筛选栏会自动出现对应按钮，不需要改代码。项目状态仍固定为 `持续开发` / `已有实现` / `早期作品`。字段错误会显示明确的服务错误（具体原因看 `npm run dev` 控制台输出），不会伪装成空内容。
 
 已有项目内容包括水木科协网站、日志清单、xiumi-agent、MOD Forge 与 Valorant 资料站。笔记板块保留完整架构，内容由本人自行添加。
 
@@ -49,7 +53,7 @@ npm run test:browser
 
 浏览器测试在 Windows 使用已安装的 Edge；其他系统需自行提供 Playwright Chromium。`BROWSER_CHANNEL` 可覆盖 Windows 浏览器通道。界面自测入口：[接口自测](http://localhost:4173/self-test/)。
 
-- API/业务/契约测试：正常请求、分类和排序、搜索归一、错误、媒体白名单、RSS、CORS、损坏内容与重复标识。
+- API/业务/契约测试：正常请求、分类和排序、搜索归一、错误、媒体白名单、RSS、CORS、损坏内容、文件名/slug 不匹配、动态分类与 Markdown 解析。
 - 浏览器测试：桌面与手机布局、详情、筛选、键盘搜索、请求取消、主题记忆、相册、错误重试和链接。
 - 截图与临时资料在 `.qa/`，不入库。
 
@@ -58,10 +62,9 @@ npm run test:browser
 ```text
 site/                    独立前端；板块 HTML、专用 TypeScript、共享资源
 server/src/api/          后端板块；controller / dto / service / repository / module
-server/src/common/       协议校验、错误、日志、内容读取适配器
+server/src/common/       协议校验、错误、日志、内容读取适配器、笔记 Markdown 解析
 server/src/config/       后端唯一配置来源
-server/content/          筛选后的内容 JSON
-server/public/media/     相册图片
+data/                    全部内容：profile/life JSON、projects/notes 每项一文件、media 图片
 contracts/blog-api.md    HTTP、DTO 与模块契约
 docs/ARCHITECTURE.md     整体架构、部署边界与验收
 ARCHITECTURE.md          逐文件入口、分支、请求、文件影响和提示文字
@@ -84,8 +87,8 @@ hooks/pre-push          全量 strict 类型门禁
 | `PORT` | `3000` | 生产 1–65535；测试可用 0 |
 | `CORS_ORIGINS` | localhost 与 127.0.0.1 的 4173 origin | 逗号分隔的 HTTP(S) origin，不带路径或尾斜杠 |
 | `PUBLIC_ORIGIN` | `http://localhost:4173` | RSS 外部链接所用 origin |
-| `CONTENT_DIR` | `server/content` | 内容目录绝对路径 |
-| `MEDIA_DIR` | `server/public/media` | 媒体目录绝对路径 |
+| `CONTENT_DIR` | `data/` | 内容目录绝对路径 |
+| `MEDIA_DIR` | `data/media` | 媒体目录绝对路径 |
 | `SEARCH_LIMIT` | `20` | 1–100 |
 | `REQUEST_TIMEOUT_MS` | `15000` | 100–120000 毫秒 |
 | `CONTENT_MAX_BYTES` | `2097152` | 1024–16777216 字节，同时限制媒体大小 |

@@ -1,0 +1,67 @@
+{
+  "slug": "mod-forge",
+  "order": 4,
+  "title": "MOD Forge · skill-agent",
+  "category": "AI Agent",
+  "summary": "围绕 Minecraft Forge 模组开发，把领域技能、代码生成、构建和测试串成一条链。",
+  "tags": [
+    "Python",
+    "FastAPI",
+    "Java"
+  ],
+  "status": "已有实现",
+  "updatedAt": "2026-10-26",
+  "repositoryUrl": "https://github.com/ZMJJKK123-hub/skill-agent",
+  "sections": [
+    {
+      "id": "section-0",
+      "title": "缘起",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "把游戏 MOD 制作中的知识和工具整理给 Agent：从理解需求开始，加载领域资料、编写 Java 代码与资源文件，再调用构建与测试工具。"
+        }
+      ]
+    },
+    {
+      "id": "section-1",
+      "title": "项目结构",
+      "blocks": [
+        {
+          "kind": "list",
+          "items": [
+            "核心引擎：模型循环、工具注册与领域技能库。",
+            "网页版：FastAPI 后端与 React / Next.js 前端，提供会话、过程查看与产物下载入口。",
+            "构建链：调用 Gradle 构建，并为 GameTest 测试与编译修复提供工具。",
+            "外部接入：以兼容 API 的形式提供 Agent 能力。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section-2",
+      "title": "开发闭环",
+      "blocks": [
+        {
+          "kind": "code",
+          "language": "text",
+          "code": "需求与技能 → 代码与资源 → 构建与测试"
+        },
+        {
+          "kind": "paragraph",
+          "text": "对这个项目来说，生成代码只是中间步骤。构建回执、测试输出和最终产物，才让整个流程具有可检查的结果。"
+        }
+      ]
+    },
+    {
+      "id": "section-3",
+      "title": "当前边界",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "项目面向 Windows 环境，并有固定的 Minecraft、Forge 与 Java 目标版本。运行前需要配置相应工具链和模型接口，任意需求的成功率并未在本博客中做额外承诺。"
+        }
+      ]
+    }
+  ]
+}

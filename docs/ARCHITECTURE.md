@@ -13,9 +13,9 @@ flowchart LR
   Controller --> Service[Service / 领域查询]
   Service --> Port[Repository 接口]
   Port --> Adapter[内容读取适配器]
-  Adapter --> Content[server/content/ 筛选后的 JSON]
+  Adapter --> Content[data/ 内容文件：JSON 与逐篇 Markdown]
   Frontend -->|媒体 URL| Media[只读媒体白名单]
-  Media --> Photos[server/public/media/]
+  Media --> Photos[data/media/]
 ```
 
 Controller 负责路由、格式和参数；Service 负责分类、排序、查询与组合；Repository/ContentSource 负责 I/O。各板块 module 及 app.module 负责依赖注入，Service 不创建文件驱动或 HTTP 客户端。
@@ -43,8 +43,7 @@ Controller 负责路由、格式和参数；Service 负责分类、排序、查�
 | `server/src/api/media/` | 媒体五件套 |
 | `server/src/common/` | 共享协议、错误、日志与底层读取 |
 | `server/src/config/` | 后端配置 |
-| `server/content/` | 人工筛选后的可提交内容 |
-| `server/public/media/` | 优化后的图片 |
+| `data/` | 全部站点内容：profile/life 单文件，projects/notes 逐项一文件，media 图片 |
 
 根目录旧静态草稿已被正式模块替代。没有浏览器读取桌面、跨项目运行数据导入或运行时自动扫描。
 
@@ -55,11 +54,11 @@ Controller 负责路由、格式和参数；Service 负责分类、排序、查�
 | 用户触发 | 端点 | 成功 data |
 | --- | --- | --- |
 | 首页、关于页加载 | `GET /api/v1/profile` | ProfileDto |
-| 项目列表、分类按钮 | `GET /api/v1/projects?category=...` | ListDto<ProjectSummaryDto> |
+| 项目列表（分类为客户端筛选） | `GET /api/v1/projects?category=...` | ListDto<ProjectSummaryDto> |
 | 点击项目 | `GET /api/v1/projects/{slug}` | ProjectDetailDto |
-| 笔记列表、分类按钮 | `GET /api/v1/notes?category=...` | ListDto<NoteSummaryDto> |
+| 笔记列表（分类为客户端筛选） | `GET /api/v1/notes?category=...` | ListDto<NoteSummaryDto> |
 | 点击笔记 | `GET /api/v1/notes/{slug}` | NoteDetailDto |
-| 相册加载、分类按钮 | `GET /api/v1/life?category=...` | LifeDto |
+| 相册加载（分类为客户端筛选） | `GET /api/v1/life?category=...` | LifeDto |
 | 输入搜索词 | `GET /api/v1/search?q=...` | ListDto<SearchResultDto> |
 | 接口自测 | `GET /api/v1/health` | HealthDto |
 | RSS 订阅 | `GET /feed.xml` | RSS XML |
@@ -73,22 +72,22 @@ Controller 负责路由、格式和参数；Service 负责分类、排序、查�
 
 | 请求 | 文件读取 | 文件写入 |
 | --- | --- | --- |
-| profile | `server/content/profile.json` | 无 |
-| projects 列表/详情 | `server/content/projects.json` | 无 |
-| notes 列表/详情、feed.xml | `server/content/notes.json` | 无 |
-| life | `server/content/life.json` | 无 |
-| search | `server/content/profile.json`、`projects.json`、`notes.json`、`life.json` | 无 |
-| health | 上述四个内容文件 | 无 |
-| media | `server/content/life.json` 与白名单内图片 | 无 |
+| profile | `data/profile.json` | 无 |
+| projects 列表/详情 | `data/projects/` 下全部 `.json`（跳过 `.`/`_` 前缀） | 无 |
+| notes 列表/详情、feed.xml | `data/notes/` 下全部 `.md`（跳过 `.`/`_` 前缀） | 无 |
+| life | `data/life.json` | 无 |
+| search | profile + projects + notes + life 的聚合读取 | 无 |
+| health | 上述四类内容资源 | 无 |
+| media | `data/life.json` 白名单与 `data/media/` 内图片 | 无 |
 
-请求不会创建文件或目录。日志由统一 logger 写到进程输出，宿主自行收集。JSON 每次请求重新读取并完整校验，失败不使用假空数组兜底。重复项目/文章标识被拒绝；媒体验证文件名、白名单与 realpath 边界。
+请求不会创建文件或目录。日志由统一 logger 写到进程输出，宿主自行收集。内容文件每次请求重新读取并完整校验（项目逐文件 JSON、笔记逐篇 Markdown 解析），失败不使用假空数组兜底。文件名必须等于内容 slug；媒体验证文件名、白名单与 realpath 边界。
 
 ## 5. 页面行为
 
 - 视觉遵守 `UI-SPEC.md`：1220px 三列网格、242px 侧栏、48px 顶栏、靛蓝链接与 15px 正文；大屏按根字号缩放。
 - 页面只挂载本板块的脚本；公共导航、主题、目录和搜索由共享装配入口连接。
 - 内容块按类型生成有限元素，所有文本转义；后端不发送可执行 HTML。
-- 加载失败显示重试面板；筛选失败保留上次内容，重试后才替换。
+- 加载失败显示重试面板；分类筛选在客户端完成（类别由内容动态派生），不触发请求。
 - 搜索空输入不请求；校验长度；防抖、取消和序号共同避免旧响应覆盖。Ctrl/⌘+K 打开，方向键选择，Enter 打开，Esc 关闭。
 - 移动端导航/目录抽屉提供遮罩、焦点循环和关闭后焦点恢复；深色模式在允许时保存到 localStorage。
 - 相册限制在当前筛选结果中切换，左右键翻页，Esc 关闭；图片加载失败显示安全提示。
@@ -99,7 +98,7 @@ Controller 负责路由、格式和参数；Service 负责分类、排序、查�
 
 ## 7. 内容来源与取舍
 
-个人介绍整理自个人记录和学习计划；项目介绍整理自实际项目 README 与源码；笔记板块当前为空，内容由本人后续添加。照片使用原记录日期。CANN 官方学习仓库作为学习背景，不列为个人原创作品；已安装应用不列为个人项目；算子练习不列为项目。
+个人介绍整理自个人记录和学习计划；项目介绍整理自实际项目 README 与源码；笔记板块当前为空，内容由本人后续添加。照片使用原记录日期。内容统一存放在根目录 `data/`：笔记为逐篇 Markdown（头部信息 + 行块语法），分类为自由标签，新类别自动进入筛选栏。CANN 官方学习仓库作为学习背景，不列为个人原创作品；已安装应用不列为个人项目；算子练习不列为项目。
 
 未复制身份证、签名、学号、账号、密码、API Key、报销材料、第三方教材及其他项目源码。服务不访问原始桌面文件。
 

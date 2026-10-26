@@ -8,7 +8,7 @@ import { BlogError } from '../../common/errors.js';
 export interface ProjectsService {list(category?:ProjectCategory):Promise<ListDto<ProjectSummaryDto>>; get(slug:string):Promise<ProjectDetailDto>; all():Promise<readonly ProjectDetailDto[]>;}
 /** Args: repository port. Returns: pure read service; I/O errors propagate, unknown slug throws NOT_FOUND. Globals Used: None. Calls: repository.readAll. */
 export function createService(repository:ProjectsRepository):ProjectsService {
-  const all=async():Promise<readonly ProjectDetailDto[]>=>repository.readAll();
+  const all=async():Promise<readonly ProjectDetailDto[]>=>[...await repository.readAll()].sort((a,b)=>a.order-b.order);
   return { all,
     async list(category?:ProjectCategory):Promise<ListDto<ProjectSummaryDto>> {
       const items=(await all()).filter(item=>category===undefined||item.category===category).map(({sections: _sections,...summary})=>summary);

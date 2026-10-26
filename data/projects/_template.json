@@ -1,0 +1,24 @@
+{
+  "slug": "my-project",
+  "order": 6,
+  "title": "项目名称（120 字以内）",
+  "category": "Web 开发",
+  "summary": "一两句话的项目简介（500 字以内），显示在项目列表卡片上。",
+  "tags": ["标签一", "标签二"],
+  "status": "持续开发",
+  "updatedAt": "2026-11-02",
+  "repositoryUrl": "https://github.com/你的用户名/仓库名",
+  "sections": [
+    {
+      "id": "background",
+      "title": "背景",
+      "blocks": [
+        { "kind": "paragraph", "text": "为什么做这个项目、想解决什么问题。" },
+        { "kind": "list", "items": ["要点一", "要点二"] },
+        { "kind": "code", "language": "text", "code": "// 代码块，language 随意标注" },
+        { "kind": "callout", "title": "注意", "text": "提示框内容。" },
+        { "kind": "links", "items": [{ "label": "相关链接", "href": "https://example.com" }] }
+      ]
+    }
+  ]
+}

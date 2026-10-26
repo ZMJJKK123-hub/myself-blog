@@ -22,11 +22,12 @@ export interface Route {readonly pattern:RegExp;readonly handle:(context:Request
 export function validateQuery(params:URLSearchParams,allowed:readonly string[]):void {
   for(const [key,value] of params){if(!allowed.includes(key)||!value.trim()||params.getAll(key).length!==1)throw new BlogError('INVALID_QUERY');}
 }
-/** Args: supplied category or null and legal values. Returns: typed category or undefined; invalid values throw. Globals Used: None. Calls: includes. */
-export function category<const T extends readonly string[]>(value:string|null,values:T):T[number]|undefined {
+/** Args: supplied category query value or null. Returns: trimmed free-form category or undefined; empty/overlong values throw INVALID_QUERY. Globals Used: None. Calls: Array.from. */
+export function category(value:string|null):string|undefined {
   if(value===null)return undefined;
-  if(!values.includes(value))throw new BlogError('INVALID_QUERY');
-  return value;
+  const trimmed=value.trim();
+  if(!trimmed||Array.from(trimmed).length>40)throw new BlogError('INVALID_QUERY');
+  return trimmed;
 }
 /** Args: raw route match. Returns: decoded valid slug; malformed encoding/path identifier throws INVALID_SLUG. Globals Used: None. Calls: decodeURIComponent, slugSchema.parse. */
 export function slug(value:string|undefined):string {try{return slugSchema.parse(decodeURIComponent(value??''));}catch(cause){throw new BlogError('INVALID_SLUG',cause);}}

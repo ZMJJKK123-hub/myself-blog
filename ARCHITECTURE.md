@@ -72,7 +72,7 @@ createModule(本板块所需的已配置I/O端口或跨板块只读服务) 只�
 
 ## server/src/api/health/health.repository.ts
 
-文件影响：每次读取 profile.json、projects.json、notes.json、life.json；无追加、覆盖、删除或建目录。
+文件影响：每次读取 data/profile.json、data/projects/ 全部 JSON、data/notes/ 全部 Markdown、data/life.json；无追加、覆盖、删除或建目录。
 
 createRepository(注入的只读服务或探针) 返回 HealthRepository。probe() 返回已验证只读快照 Promise（probe 返回void）；I/O/字段失败传播 CONTENT_UNAVAILABLE，项目和文章集合额外拒绝重复slug。这个适配器调用注入的服务/探针，不知道其他板块文件路径。无本板块独有日志。
 
@@ -82,7 +82,7 @@ createService(仓储接口) 返回HealthService，仅依赖抽象。check() 的�
 
 ## server/src/api/life/life.controller.ts
 
-routes(注入的LifeService) 返回只读 Route 数组，注册 /api/v1/life。触发：打开相册、点击分类。DTO检查：可选 category；未知、重复、空查询字段400。成功返回 LifeDto，前端按对应页面章节落地。无效参数为“请求参数不正确。”，非法slug为“内容标识不正确。”，不存在为“这条内容不存在。”，不可用为“内容暂时不可用，请稍后重试。”；HTTP边界负责记录和包装。本文件不读写磁盘或单独打印日志。
+routes(注入的LifeService) 返回只读 Route 数组，注册 /api/v1/life。触发：打开相册（分类为客户端筛选，不触发请求）。DTO检查：可选 category 为自由文本；未知、重复、空查询字段400。成功返回 LifeDto，前端按对应页面章节落地。无效参数为“请求参数不正确。”，非法slug为“内容标识不正确。”，不存在为“这条内容不存在。”，不可用为“内容暂时不可用，请稍后重试。”；HTTP边界负责记录和包装。本文件不读写磁盘或单独打印日志。
 
 ## server/src/api/life/life.dto.ts
 
@@ -94,7 +94,7 @@ createModule(本板块所需的已配置I/O端口或跨板块只读服务) 只�
 
 ## server/src/api/life/life.repository.ts
 
-文件影响：每次读取 life.json；无追加、覆盖、删除或建目录。
+文件影响：每次读取 data/life.json；无追加、覆盖、删除或建目录。
 
 createRepository(注入的内容源/媒体目录与字节限制) 返回 LifeRepository。read() 返回已验证只读快照 Promise；I/O/字段失败传播 CONTENT_UNAVAILABLE，项目和文章集合额外拒绝重复slug。底层固定JSON路径与大小校验见 ContentSource 章节。无本板块独有日志。
 
@@ -116,7 +116,7 @@ createModule(本板块所需的已配置I/O端口或跨板块只读服务、媒�
 
 ## server/src/api/media/media.repository.ts
 
-文件影响：每次读取 life.json与mediaDir内白名单图片；无追加、覆盖、删除或建目录。
+文件影响：每次读取 data/life.json 与 data/media/ 内白名单图片；无追加、覆盖、删除或建目录。
 
 createRepository(注入的内容源/媒体目录与字节限制) 返回 MediaRepository。read(filename) 返回已验证文件字节 Promise；I/O/字段失败传播 CONTENT_UNAVAILABLE，项目和文章集合额外拒绝重复slug。文件缺失404；不合法文件名/realpath越界400；其他读取错误503。无本板块独有日志。
 
@@ -126,7 +126,7 @@ createService(仓储接口,生活只读服务) 返回MediaService，仅依赖抽
 
 ## server/src/api/notes/notes.controller.ts
 
-routes(注入的NotesService) 返回只读 Route 数组，注册 /api/v1/notes 及 /{slug}。触发：打开笔记、点击分类或文章。DTO检查：可选 category；详情为合法slug；未知、重复、空查询字段400。成功返回 列表 ListDto<NoteSummaryDto>，详情 NoteDetailDto，前端按对应页面章节落地。无效参数为“请求参数不正确。”，非法slug为“内容标识不正确。”，不存在为“这条内容不存在。”，不可用为“内容暂时不可用，请稍后重试。”；HTTP边界负责记录和包装。本文件不读写磁盘或单独打印日志。
+routes(注入的NotesService) 返回只读 Route 数组，注册 /api/v1/notes 及 /{slug}。触发：打开笔记或点击文章（分类为客户端筛选，不触发请求）。DTO检查：可选 category 为自由文本；详情为合法slug；未知、重复、空查询字段400。成功返回 列表 ListDto<NoteSummaryDto>，详情 NoteDetailDto，前端按对应页面章节落地。无效参数为“请求参数不正确。”，非法slug为“内容标识不正确。”，不存在为“这条内容不存在。”，不可用为“内容暂时不可用，请稍后重试。”；HTTP边界负责记录和包装。本文件不读写磁盘或单独打印日志。
 
 ## server/src/api/notes/notes.dto.ts
 
@@ -138,9 +138,9 @@ createModule(本板块所需的已配置I/O端口或跨板块只读服务) 只�
 
 ## server/src/api/notes/notes.repository.ts
 
-文件影响：每次读取 notes.json；无追加、覆盖、删除或建目录。
+文件影响：每次读取 data/notes/ 下全部 .md（跳过 . 与 _ 前缀文件）；无追加、覆盖、删除或建目录。
 
-createRepository(注入的内容源/媒体目录与字节限制) 返回 NotesRepository。readAll() 返回已验证只读快照 Promise；I/O/字段失败传播 CONTENT_UNAVAILABLE，项目和文章集合额外拒绝重复slug。底层固定JSON路径与大小校验见 ContentSource 章节。无本板块独有日志。
+createRepository(注入的内容源/媒体目录与字节限制) 返回 NotesRepository。readAll() 返回已验证只读快照 Promise；I/O/字段失败传播 CONTENT_UNAVAILABLE，项目和文章集合额外拒绝重复slug。底层目录读取与 Markdown 解析规则见 ContentSource 与 markdown 章节。无本板块独有日志。
 
 ## server/src/api/notes/notes.service.ts
 
@@ -160,7 +160,7 @@ createModule(本板块所需的已配置I/O端口或跨板块只读服务) 只�
 
 ## server/src/api/profile/profile.repository.ts
 
-文件影响：每次读取 profile.json；无追加、覆盖、删除或建目录。
+文件影响：每次读取 data/profile.json；无追加、覆盖、删除或建目录。
 
 createRepository(注入的内容源/媒体目录与字节限制) 返回 ProfileRepository。read() 返回已验证只读快照 Promise；I/O/字段失败传播 CONTENT_UNAVAILABLE，项目和文章集合额外拒绝重复slug。底层固定JSON路径与大小校验见 ContentSource 章节。无本板块独有日志。
 
@@ -170,7 +170,7 @@ createService(仓储接口) 返回ProfileService，仅依赖抽象。getProfile(
 
 ## server/src/api/projects/projects.controller.ts
 
-routes(注入的ProjectsService) 返回只读 Route 数组，注册 /api/v1/projects 及 /{slug}。触发：打开项目列表、点击分类或项目。DTO检查：可选 category；详情为合法slug；未知、重复、空查询字段400。成功返回 列表 ListDto<ProjectSummaryDto>，详情 ProjectDetailDto，前端按对应页面章节落地。无效参数为“请求参数不正确。”，非法slug为“内容标识不正确。”，不存在为“这条内容不存在。”，不可用为“内容暂时不可用，请稍后重试。”；HTTP边界负责记录和包装。本文件不读写磁盘或单独打印日志。
+routes(注入的ProjectsService) 返回只读 Route 数组，注册 /api/v1/projects 及 /{slug}。触发：打开项目列表或点击项目（分类为客户端筛选，不触发请求）。DTO检查：可选 category 为自由文本；详情为合法slug；未知、重复、空查询字段400。成功返回 列表 ListDto<ProjectSummaryDto>，详情 ProjectDetailDto，前端按对应页面章节落地。无效参数为“请求参数不正确。”，非法slug为“内容标识不正确。”，不存在为“这条内容不存在。”，不可用为“内容暂时不可用，请稍后重试。”；HTTP边界负责记录和包装。本文件不读写磁盘或单独打印日志。
 
 ## server/src/api/projects/projects.dto.ts
 
@@ -182,13 +182,13 @@ createModule(本板块所需的已配置I/O端口或跨板块只读服务) 只�
 
 ## server/src/api/projects/projects.repository.ts
 
-文件影响：每次读取 projects.json；无追加、覆盖、删除或建目录。
+文件影响：每次读取 data/projects/ 下全部 .json（跳过 . 与 _ 前缀文件）；无追加、覆盖、删除或建目录。
 
-createRepository(注入的内容源/媒体目录与字节限制) 返回 ProjectsRepository。readAll() 返回已验证只读快照 Promise；I/O/字段失败传播 CONTENT_UNAVAILABLE，项目和文章集合额外拒绝重复slug。底层固定JSON路径与大小校验见 ContentSource 章节。无本板块独有日志。
+createRepository(注入的内容源/媒体目录与字节限制) 返回 ProjectsRepository。readAll() 返回已验证只读快照 Promise；I/O/字段失败传播 CONTENT_UNAVAILABLE，项目和文章集合额外拒绝重复slug。底层目录读取规则见 ContentSource 章节。无本板块独有日志。
 
 ## server/src/api/projects/projects.service.ts
 
-createService(仓储接口) 返回ProjectsService，仅依赖抽象。list(category)、get(slug)、all() 的参数含义分别为筛选分类、记录标识或查询文字，未列出的无参；返回 列表 ListDto<ProjectSummaryDto>，详情 ProjectDetailDto Promise。规则：list 过滤并移除 sections，顺序保持原展示顺序；get 找不到抛404；all 返回完整只读记录。仓储失败向外传播，不用空集合遮掩失败，不读写文件、不打印日志。
+createService(仓储接口) 返回ProjectsService，仅依赖抽象。list(category)、get(slug)、all() 的参数含义分别为筛选分类、记录标识或查询文字，未列出的无参；返回 列表 ListDto<ProjectSummaryDto>，详情 ProjectDetailDto Promise。规则：all 按 order 升序排列（同序保持文件名顺序）；list 过滤并移除 sections；get 找不到抛404；all 返回完整只读记录。仓储失败向外传播，不用空集合遮掩失败，不读写文件、不打印日志。
 
 ## server/src/api/search/search.controller.ts
 
@@ -204,7 +204,7 @@ createModule(本板块所需的已配置I/O端口或跨板块只读服务与搜�
 
 ## server/src/api/search/search.repository.ts
 
-文件影响：每次读取 profile.json、projects.json、notes.json、life.json；无追加、覆盖、删除或建目录。
+文件影响：经 profile/projects/notes/life 四个只读服务聚合读取 data/ 下对应内容；无追加、覆盖、删除或建目录。
 
 createRepository(注入的只读服务或探针) 返回 SearchRepository。read() 返回已验证只读快照 Promise；I/O/字段失败传播 CONTENT_UNAVAILABLE，项目和文章集合额外拒绝重复slug。这个适配器调用注入的服务/探针，不知道其他板块文件路径。无本板块独有日志。
 
@@ -218,11 +218,11 @@ createApp(已验证配置,logger) 返回尚未监听的 Node Server。实例化�
 
 ## server/src/common/content-source.ts
 
-JsonContentSource(已配置绝对根目录,最大字节数) 实现 ContentSource；只允许 profile/projects/notes/life 固定资源。read(资源名,Schema) 返回已验证数据 Promise；stat 超限、文件缺失、读取、JSON 或字段错误统一抛 CONTENT_UNAVAILABLE，保留 cause 与安全资源名。读取前后均校验大小，不写文件、不扫描目录。错误最终记录 request_failed。实际影响：读取 contentDir/{固定资源}.json，无写入。
+JsonContentSource(已配置绝对根目录,最大字节数) 实现 ContentSource；只允许 profile/projects/notes/life 固定资源。read(资源名,Schema) 返回已验证数据 Promise。profile/life 读取单文件 JSON；projects/notes 读取目录内全部 .json/.md（按文件名排序，跳过 . 与 _ 前缀），笔记逐篇经 markdown 解析，文件名必须等于内容 slug，目录缺失、stat 超限、读取、解析或字段错误统一抛 CONTENT_UNAVAILABLE，保留 cause 与安全资源名。读取前后均校验大小，不写文件。错误最终记录 request_failed。实际影响：读取 contentDir 下 data 结构对应文件，无写入。
 
 ## server/src/common/contracts.ts
 
-定义后端公共实体和其 Schema，不导入前端。字段和类型见 contracts/blog-api.md。内容块 kind 映射分派；未知类型拒绝。listSchema(实体 Schema) 返回列表 Schema，空列表合法，total 不一致拒绝。纯定义/校验，不读写文件和日志。
+定义后端公共实体和其 Schema，不导入前端。字段和类型见 contracts/blog-api.md；分类为自由标签（非空、≤40 字符）。内容块 kind 映射分派；未知类型拒绝。listSchema(实体 Schema) 返回列表 Schema，空列表合法，total 不一致拒绝。纯定义/校验，不读写文件和日志。
 
 ## server/src/common/errors.ts
 
@@ -230,13 +230,17 @@ BlogError(code,cause,可选安全资源标识) 形成带 HTTP 状态的领域错
 
 ## server/src/common/http.ts
 
-validateQuery(参数表,允许键集合) 返回 void；未知、重复、空值抛 INVALID_QUERY。category(值或null,合法值集合) 返回合法枚举或 undefined；不合法抛400。slug(路径片段) 返回 decode 后合法标识，缺失/坏编码/格式非法均400。
+validateQuery(参数表,允许键集合) 返回 void；未知、重复、空值抛 INVALID_QUERY。category(值或null) 返回 trim 后非空且 ≤40 字符的自由分类或 undefined；为空或超长抛400。slug(路径片段) 返回 decode 后合法标识，缺失/坏编码/格式非法均400。
 
 createHandler(注册路由,配置,logger) 返回 Node HTTP 回调；每请求生成 traceId 并设置安全头。允许的 origin 回显 CORS；不允许 origin 不提供跨域头；OPTIONS 允许204、不允许403。非 GET/HEAD 返回405和 Allow，不执行业务。正常请求按路由表分派；未知404；已知错误保留状态和安全消息；未知异常500。成功 INFO 含耗时，4xx WARNING，5xx ERROR。send(响应对象,结果,是否HEAD,是否成功包装) 返回 void；已关闭 socket 跳过，JSON 成功包 data、失败不包，RSS/媒体用固定 MIME。无文件访问。
 
 ## server/src/common/logger.ts
 
 JsonLogger 无可变业务状态，info(安全上下文) 写 INFO，warning(安全上下文) 写 WARNING，error(安全上下文,异常) 写 ERROR 与经过路径移除的自身/原因堆栈。均返回 void；上下文可含事件、traceId、耗时、错误码、端口与安全资源名。绝不输出内容、查询原文或原异常消息。输出流异常是可直接失败点。
+
+## server/src/common/markdown.ts
+
+parseNoteMarkdown(笔记文件全文) 返回不含 slug 的元数据与内容节。头部信息为「---」包裹的 key: value 行：title/category/date 必填，tags 支持 [a, b] 或单值，summary 缺省取正文第一段（截断 120 字符加省略号），readingMinutes 缺省按正文约 400 字/分钟估算（1–120）。正文行块语法：「## 」开启章节（首个章节前的正文归入 id=intro、标题「开篇」），连续「- 」为列表，「> 」为 callout（标题固定「注」），围栏 ``` 为代码块；「# / ###」与未闭合围栏抛 TypeError，未知/重复/缺失头部字段抛 TypeError。所有错误由 ContentSource 包装为 CONTENT_UNAVAILABLE，消息含具体原因，不进入响应。纯解析，无 I/O 与日志。
 
 ## server/src/common/rss.ts
 
@@ -248,7 +252,7 @@ serializeFeed(有序笔记摘要,配置的公开origin) 返回 RSS XML 字符串
 
 ## server/src/config/app.config.ts
 
-loadConfig(环境对象，默认 process.env) 返回冻结 AppConfig。HOST 默认127.0.0.1；PORT 0–65535（0供测试）；SEARCH_LIMIT 1–100；REQUEST_TIMEOUT_MS 100–120000；CONTENT_MAX_BYTES 1024–16777216。contentDir/mediaDir 转为绝对路径；CORS_ORIGINS/PUBLIC_ORIGIN 必须为无路径 HTTP(S) origin。非法数值、URL 直接阻止启动，由 main 记录 configuration_failed。本文件不读内容和前端文件。
+loadConfig(环境对象，默认 process.env) 返回冻结 AppConfig。HOST 默认127.0.0.1；PORT 0–65535（0供测试）；SEARCH_LIMIT 1–100；REQUEST_TIMEOUT_MS 100–120000；CONTENT_MAX_BYTES 1024–16777216。contentDir 默认仓库根 data/，mediaDir 默认 data/media，均转为绝对路径；CORS_ORIGINS/PUBLIC_ORIGIN 必须为无路径 HTTP(S) origin。非法数值、URL 直接阻止启动，由 main 记录 configuration_failed。本文件不读内容和前端文件。
 
 ## server/src/main.ts
 
@@ -385,7 +389,7 @@ projectCard(项目摘要,是否紧凑) 返回详情链接；noteRow(笔记摘要
 
 ## site/life/assets/life.ts
 
-load() 无参数，GET /life?category，成功保存当前过滤后的照片、渲染缩略图和校园文字；空集合显示“这个分类还没有照片。”。点击分类验证枚举后重新加载；失败进入共享错误面板。
+load() 无参数，GET /life 全量；类别按钮由当前照片动态派生，点击在客户端筛选并重渲染（不触发请求），「全部」清除选择。成功保存当前筛选后的照片、渲染缩略图和校园文字；空集合显示“这个分类还没有照片。”；失败进入共享错误面板。
 
 show(相对序号) 返回 void：空集合不做事；序号在当前结果中环绕，设置 image.src 为配置媒体 origin 加白名单 URL，设置 alt/标题/日期/计数，并打开 dialog。按钮或左右键翻页；Esc 使用原生 dialog 关闭；关闭按钮与背景关闭。图片请求失败将标题改为“照片暂时无法加载，请稍后重试。”。初次页面失败由 run 记录 ERROR；图片失败仅在页面提示。本模块不挂全局接口；动态必需节点被篡改可能出错。
 
@@ -403,7 +407,7 @@ show(相对序号) 返回 void：空集合不做事；序号在当前结果中�
 
 ## site/notes/assets/notes.ts
 
-加载路径决定列表或详情。load() 无参数，返回 HTML Promise：列表 GET /notes?category，成功显示文章，空集合显示“这个分类还没有笔记。”；详情 GET /notes/{slug}，显示内容块、日期、阅读时长和标签。分类点击的成功/失败/重试同 projects。
+加载路径决定列表或详情。load() 无参数，返回 HTML Promise：列表 GET /notes 全量，类别按钮由列表动态派生，点击在客户端筛选并重渲染（不触发请求），「全部」清除选择；空集合显示“这个分类还没有笔记。”；详情 GET /notes/{slug}，显示内容块、日期、阅读时长和标签。
 
 wireCode() 在渲染后给每个 pre 添加复制按钮，返回 void。点击时从 code 读取文字，调用 clipboard.writeText；成功按钮为“已复制”；剪贴板缺失或拒绝时为“复制失败”并 WARNING。未请求后端。其余页面错误由共享 run 处理并 ERROR；本页不挂全局接口。
 
@@ -417,9 +421,9 @@ wireCode() 在渲染后给每个 pre 添加复制按钮，返回 void。点击�
 
 ## site/projects/assets/projects.ts
 
-模块加载后解析路径：没有详情标识或 index.html 为列表，其他为详情。load() 无参数，返回 HTML Promise。列表 GET /projects，可按 category；成功显示项目和总数，空集合显示“这个分类还没有项目。”。详情 GET /projects/编码后的标识，显示状态、标签、段落；仓库为 null 时没有仓库按钮。
+模块加载后解析路径：没有详情标识或 index.html 为列表，其他为详情。load() 无参数，返回 HTML Promise。列表 GET /projects 全量；类别按钮由列表动态派生，点击在客户端筛选并重渲染（不触发请求），「全部」清除选择；成功显示项目和总数，空集合显示“这个分类还没有项目。”。详情 GET /projects/编码后的标识，显示状态、标签、段落；仓库为 null 时没有仓库按钮。
 
-点击分类按钮检查本地枚举，全部为 undefined，再调用 run(load)；成功替换、失败保留旧列表并显示重试；序号机制防止旧分类覆盖。非法路径解码、API 错误均进入 run。没有其他 window 挂载和专用日志，ERROR 来自共享入口。
+点击分类按钮本地筛选重渲染，不发起请求；序号机制防止旧渲染覆盖。非法路径解码、API 错误均进入 run。没有其他 window 挂载和专用日志，ERROR 来自共享入口。
 
 ## site/projects/detail.html
 
