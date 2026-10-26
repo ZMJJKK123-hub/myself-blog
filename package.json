@@ -1,0 +1,14 @@
+{
+  "name": "liyixin-blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "李义鑫的个人主页、项目档案与学习笔记",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/check.mjs",
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs"
+  },
+  "engines": { "node": ">=20" }
+}

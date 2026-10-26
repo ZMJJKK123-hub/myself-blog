@@ -1,0 +1,7 @@
+dist/
+node_modules/
+.qa/
+*.tar.gz
+*.log
+.env
+.env.*
