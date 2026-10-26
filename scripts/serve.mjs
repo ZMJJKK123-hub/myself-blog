@@ -9,7 +9,7 @@ import {logger} from './logger.mjs';
 /** The frontend root is the only directory this preview server can read. */
 const root=path.join(config.root,'site');
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml'};
-const sections=['projects','notes','life','archive','about','not-found','self-test'];
+const sections=['projects','notes','life','about','not-found','self-test'];
 http.createServer(async(req,res)=>{
   try{
     const url=new URL(req.url??'/','http://localhost');let pathname=decodeURIComponent(url.pathname);

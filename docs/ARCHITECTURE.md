@@ -28,7 +28,6 @@ Controller 负责路由、格式和参数；Service 负责分类、排序、查�
 | `site/projects/` | 项目列表与详情 |
 | `site/notes/` | 笔记列表与详情 |
 | `site/life/` | 校园相册 |
-| `site/archive/` | 时间归档 |
 | `site/about/` | 个人介绍 |
 | `site/not-found/` | 404 |
 | `site/self-test/` | 手动接口自测，不进入主导航 |
@@ -39,7 +38,6 @@ Controller 负责路由、格式和参数；Service 负责分类、排序、查�
 | `server/src/api/projects/` | 项目五件套 |
 | `server/src/api/notes/` | 笔记五件套 |
 | `server/src/api/life/` | 生活五件套 |
-| `server/src/api/archive/` | 归档五件套 |
 | `server/src/api/search/` | 搜索五件套 |
 | `server/src/api/health/` | 健康检查五件套 |
 | `server/src/api/media/` | 媒体五件套 |
@@ -62,7 +60,6 @@ Controller 负责路由、格式和参数；Service 负责分类、排序、查�
 | 笔记列表、分类按钮 | `GET /api/v1/notes?category=...` | ListDto<NoteSummaryDto> |
 | 点击笔记 | `GET /api/v1/notes/{slug}` | NoteDetailDto |
 | 相册加载、分类按钮 | `GET /api/v1/life?category=...` | LifeDto |
-| 归档加载 | `GET /api/v1/archive` | ListDto<ArchiveMonthDto> |
 | 输入搜索词 | `GET /api/v1/search?q=...` | ListDto<SearchResultDto> |
 | 接口自测 | `GET /api/v1/health` | HealthDto |
 | RSS 订阅 | `GET /feed.xml` | RSS XML |
@@ -80,7 +77,6 @@ Controller 负责路由、格式和参数；Service 负责分类、排序、查�
 | projects 列表/详情 | `server/content/projects.json` | 无 |
 | notes 列表/详情、feed.xml | `server/content/notes.json` | 无 |
 | life | `server/content/life.json` | 无 |
-| archive | `server/content/notes.json`、`life.json` | 无 |
 | search | `server/content/profile.json`、`projects.json`、`notes.json`、`life.json` | 无 |
 | health | 上述四个内容文件 | 无 |
 | media | `server/content/life.json` 与白名单内图片 | 无 |
@@ -103,7 +99,7 @@ Controller 负责路由、格式和参数；Service 负责分类、排序、查�
 
 ## 7. 内容来源与取舍
 
-个人介绍整理自个人记录和学习计划；项目介绍整理自实际项目 README 与源码；笔记标记为开发整理或原日记摘编。照片使用原记录日期。RoPE 已有代码，但无设备验证凭据，展示为“待设备验证”。CANN 官方学习仓库作为学习背景，不列为个人原创作品；已安装应用不列为个人项目。
+个人介绍整理自个人记录和学习计划；项目介绍整理自实际项目 README 与源码；笔记板块当前为空，内容由本人后续添加。照片使用原记录日期。CANN 官方学习仓库作为学习背景，不列为个人原创作品；已安装应用不列为个人项目；算子练习不列为项目。
 
 未复制身份证、签名、学号、账号、密码、API Key、报销材料、第三方教材及其他项目源码。服务不访问原始桌面文件。
 

@@ -1,8 +1,8 @@
 // Config is injected into the protocol adapter and contains all network knobs.
 import type {ClientConfig} from '../config/app.config.js';
 // DTOs/decoders are frontend-local copies of the HTTP protocol, never backend imports.
-import {profileSchema,projectSchema,projectSummarySchema,noteSchema,noteSummarySchema,lifeSchema,archiveSchema,searchSchema,healthSchema,listSchema} from '../types/contracts.js';
-import type {ProfileDto,ProjectDetailDto,ProjectSummaryDto,NoteDetailDto,NoteSummaryDto,LifeDto,ArchiveMonthDto,SearchResultDto,HealthDto,ListDto,ProjectCategory,NoteCategory,PhotoCategory} from '../types/contracts.js';
+import {profileSchema,projectSchema,projectSummarySchema,noteSchema,noteSummarySchema,lifeSchema,searchSchema,healthSchema,listSchema} from '../types/contracts.js';
+import type {ProfileDto,ProjectDetailDto,ProjectSummaryDto,NoteDetailDto,NoteSummaryDto,LifeDto,SearchResultDto,HealthDto,ListDto,ProjectCategory,NoteCategory,PhotoCategory} from '../types/contracts.js';
 import type {Schema} from '../types/schema.js';
 // Typed failures are interpreted by page/search services instead of being swallowed.
 import {ApiError} from './errors.js';
@@ -12,7 +12,7 @@ export interface BlogApi {
   profile(signal?:AbortSignal):Promise<ProfileDto>;projects(category?:ProjectCategory,signal?:AbortSignal):Promise<ListDto<ProjectSummaryDto>>;
   project(slug:string,signal?:AbortSignal):Promise<ProjectDetailDto>;notes(category?:NoteCategory,signal?:AbortSignal):Promise<ListDto<NoteSummaryDto>>;
   note(slug:string,signal?:AbortSignal):Promise<NoteDetailDto>;life(category?:PhotoCategory,signal?:AbortSignal):Promise<LifeDto>;
-  archive(signal?:AbortSignal):Promise<ListDto<ArchiveMonthDto>>;search(query:string,signal?:AbortSignal):Promise<ListDto<SearchResultDto>>;
+  search(query:string,signal?:AbortSignal):Promise<ListDto<SearchResultDto>>;
   health(signal?:AbortSignal):Promise<HealthDto>;
 }
 /** Public messages are selected locally; arbitrary server error text is never rendered. */
@@ -57,7 +57,6 @@ export function createApi(config:ClientConfig):BlogApi {
     notes:(category?:NoteCategory,signal?:AbortSignal):Promise<ListDto<NoteSummaryDto>>=>request('/notes'+query(category),listSchema(noteSummarySchema),signal),
     note:(slug:string,signal?:AbortSignal):Promise<NoteDetailDto>=>request('/notes/'+encodeURIComponent(slug),noteSchema,signal),
     life:(category?:PhotoCategory,signal?:AbortSignal):Promise<LifeDto>=>request('/life'+query(category),lifeSchema,signal),
-    archive:(signal?:AbortSignal):Promise<ListDto<ArchiveMonthDto>>=>request('/archive',listSchema(archiveSchema),signal),
     search:(q:string,signal?:AbortSignal):Promise<ListDto<SearchResultDto>>=>request('/search?'+new URLSearchParams({q}),listSchema(searchSchema),signal),
     health:(signal?:AbortSignal):Promise<HealthDto>=>request('/health',healthSchema,signal),
   };

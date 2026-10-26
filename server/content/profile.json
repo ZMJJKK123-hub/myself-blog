@@ -28,7 +28,7 @@
     {
       "title": "沿源码学习操作系统",
       "text": "从 FreeRTOS 与 Linux 的调度路径读起。",
-      "href": "/notes/os-reading/"
+      "href": "/notes/"
     }
   ],
   "sections": [

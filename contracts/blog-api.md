@@ -21,10 +21,10 @@
 ```ts
 type ISODate = string; // 校验为真实 YYYY-MM-DD。
 type Slug = string; // 按公共约定校验。
-type ProjectCategory = 'Web 开发' | 'AI Agent' | '系统与算子';
+type ProjectCategory = 'Web 开发' | 'AI Agent';
 type NoteCategory = '开发记录' | '系统学习' | '学习随记';
 type PhotoCategory = '排球' | '篮球' | '足球';
-type ProjectStatus = '持续开发' | '已有实现' | '早期作品' | '待设备验证';
+type ProjectStatus = '持续开发' | '已有实现' | '早期作品';
 type ErrorCode = 'INVALID_QUERY' | 'INVALID_SLUG' | 'NOT_FOUND'
   | 'CONTENT_UNAVAILABLE' | 'INTERNAL_ERROR';
 
@@ -99,16 +99,6 @@ interface LifeDto {
   readonly photos: readonly PhotoDto[];
   readonly sections: readonly ContentSectionDto[];
 }
-interface ArchiveEntryDto {
-  readonly type: 'note' | 'life';
-  readonly title: string;
-  readonly date: ISODate;
-  readonly href: string;
-}
-interface ArchiveMonthDto {
-  readonly month: string; // YYYY-MM。
-  readonly entries: readonly ArchiveEntryDto[];
-}
 interface SearchResultDto {
   readonly type: 'project' | 'note' | 'page';
   readonly title: string;
@@ -130,7 +120,6 @@ interface HealthDto { readonly status: 'ok'; readonly apiVersion: 'v1'; }
 | `GET /notes` | 可选 `category: NoteCategory` | `ListDto<NoteSummaryDto>` | 日期降序，同日期按显式展示顺序 |
 | `GET /notes/{slug}` | 路径 slug | `NoteDetailDto` | slug 同上 |
 | `GET /life` | 可选 `category: PhotoCategory` | `LifeDto` | 照片日期降序；文字部分不受相册筛选影响 |
-| `GET /archive` | 无 | `ListDto<ArchiveMonthDto>` | 月份、记录日期降序；同日期稳定排序 |
 | `GET /search` | `q: string` | `ListDto<SearchResultDto>` | trim 后 1～80 字符，NFKC 与小写归一，按空白拆词并取交集；标题命中优先，再按稳定展示顺序，最多 20 项 |
 | `GET /health` | 无 | `HealthDto` | 不返回内部配置 |
 
@@ -143,14 +132,14 @@ interface HealthDto { readonly status: 'ok'; readonly apiVersion: 'v1'; }
   "data": {
     "items": [
       {
-        "slug": "rope",
-        "title": "RotaryPosEmb 算子",
-        "category": "系统与算子",
-        "summary": "围绕旋转位置编码的 Ascend C 实现练习。",
-        "tags": ["Ascend C", "C++", "RoPE"],
-        "status": "待设备验证",
+        "slug": "shuimu",
+        "title": "水木科协 · 数字实验场",
+        "category": "Web 开发",
+        "summary": "水木科协门户与数字实验场的建设实践。",
+        "tags": ["Web", "协作建设"],
+        "status": "持续开发",
         "updatedAt": "2026-10-26",
-        "repositoryUrl": null
+        "repositoryUrl": "https://github.com/ZMJJKK123-hub/shuimu-college-web"
       }
     ],
     "total": 1
@@ -178,7 +167,6 @@ interface NotesService {
   get(slug: Slug): Promise<NoteDetailDto>;
 }
 interface LifeService { getLife(category?: PhotoCategory): Promise<LifeDto>; }
-interface ArchiveService { list(): Promise<ListDto<ArchiveMonthDto>>; }
 interface SearchService { search(query: string): Promise<ListDto<SearchResultDto>>; }
 interface HealthService { check(): Promise<HealthDto>; }
 ```
@@ -186,7 +174,7 @@ interface HealthService { check(): Promise<HealthDto>; }
 - Repository 成功时返回已验证 DTO；文件缺失、读取失败、JSON 无效或字段非法抛 `BlogError('CONTENT_UNAVAILABLE', cause, resource)`，包含安全资源标识与 cause。不能返回伪造空数据。
 - `ProjectsService.get`、`NotesService.get` 查不到合法 slug 时抛 `BlogError('NOT_FOUND')`；不触发任意路径访问。
 - Controller 的 DTO 校验失败抛 code 为 `INVALID_QUERY` 或 `INVALID_SLUG` 的 BlogError，不调用业务层。
-- Archive、Search 通过注入的只读内容查询接口组合数据。其 repository 文件承载该板块的只读接口/适配，不能直接读取别的板块内部路径。
+- Search 通过注入的只读内容查询接口组合数据。其 repository 文件承载该板块的只读接口/适配，不能直接读取别的板块内部路径。
 - Health 通过注入的只读状态接口检查启动后的内容可用性；不会扫描桌面或暴露路径。
 - 顶层异常边界捕获已知错误并映射状态码；未知错误输出安全消息，并通过统一 logger 记录 cause 与堆栈。
 
@@ -201,7 +189,6 @@ interface BlogApi {
   notes(category?: NoteCategory, signal?: AbortSignal): Promise<ListDto<NoteSummaryDto>>;
   note(slug: Slug, signal?: AbortSignal): Promise<NoteDetailDto>;
   life(category?: PhotoCategory, signal?: AbortSignal): Promise<LifeDto>;
-  archive(signal?: AbortSignal): Promise<ListDto<ArchiveMonthDto>>;
   search(query: string, signal?: AbortSignal): Promise<ListDto<SearchResultDto>>;
 }
 ```

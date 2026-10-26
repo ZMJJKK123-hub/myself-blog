@@ -30,7 +30,6 @@
 | 笔记页/分类/详情 | notes | 文章行、总数、正文 |
 | 相册/分类 | life | 当前相册集合与校园文字 |
 | 点击图片 | media | img 和 lightbox |
-| 打开归档 | archive | 月份时间线 |
 | 搜索输入 | search | 搜索弹层列表和状态 |
 | 点击运行检查 | health及各内容模块 | 自测结果列表 |
 | 点击RSS | app.module→notes→RSS serializer | XML订阅 |
@@ -54,27 +53,10 @@
 | 图片加载失败 | 照片暂时无法加载，请稍后重试。 | 页面提示 |
 | 主题存储不可用 | 本页仍可切换，无额外屏幕消息 | theme_storage_read_failed/write_failed WARNING |
 
-## server/src/api/archive/archive.controller.ts
 
-routes(注入的ArchiveService) 返回只读 Route 数组，注册 /api/v1/archive。触发：打开归档。DTO检查：无；未知、重复、空查询字段400。成功返回 ListDto<ArchiveMonthDto>，前端按对应页面章节落地。无效参数为“请求参数不正确。”，非法slug为“内容标识不正确。”，不存在为“这条内容不存在。”，不可用为“内容暂时不可用，请稍后重试。”；HTTP边界负责记录和包装。本文件不读写磁盘或单独打印日志。
 
-## server/src/api/archive/archive.dto.ts
 
-本板块的 DTO/Schema 导出面，类型为 ListDto<ArchiveMonthDto>。没有文件访问或日志；协议校验由 controller 和 content source 使用。
 
-## server/src/api/archive/archive.module.ts
-
-createModule(本板块所需的已配置I/O端口或跨板块只读服务) 只连接 repository→service→controller；返回 routes。不执行查询、不读写文件、不输出日志；构造参数非法时抛错，由启动边界记录。
-
-## server/src/api/archive/archive.repository.ts
-
-文件影响：每次读取 notes.json、life.json；无追加、覆盖、删除或建目录。
-
-createRepository(注入的只读服务或探针) 返回 ArchiveRepository。read() 返回已验证只读快照 Promise；I/O/字段失败传播 CONTENT_UNAVAILABLE，项目和文章集合额外拒绝重复slug。这个适配器调用注入的服务/探针，不知道其他板块文件路径。无本板块独有日志。
-
-## server/src/api/archive/archive.service.ts
-
-createService(仓储接口) 返回ArchiveService，仅依赖抽象。list() 的参数含义分别为筛选分类、记录标识或查询文字，未列出的无参；返回 ListDto<ArchiveMonthDto> Promise。规则：合并文章和照片原日期，降序稳定排序再按YYYY-MM分组；空数据返回items=[]。仓储失败向外传播，不用空集合遮掩失败，不读写文件、不打印日志。
 
 ## server/src/api/health/health.controller.ts
 
@@ -232,7 +214,7 @@ createService(仓储接口,结果数量上限) 返回SearchService，仅依赖�
 
 ## server/src/app.module.ts
 
-createApp(已验证配置,logger) 返回尚未监听的 Node Server。实例化一个 ContentSource，装配 profile/projects/notes/life，注入它们的读服务到 archive/search/health/media，注册 RSS，然后连接 HTTP 边界；没有业务条件分支。RSS 从 notes.list 取文章并传给 serializer。server.requestTimeout 使用配置值。本文件不读取前端文件；内容 I/O 由被注入的 adapter 执行。
+createApp(已验证配置,logger) 返回尚未监听的 Node Server。实例化一个 ContentSource，装配 profile/projects/notes/life，注入它们的读服务到 search/health/media，注册 RSS，然后连接 HTTP 边界；没有业务条件分支。RSS 从 notes.list 取文章并传给 serializer。server.requestTimeout 使用配置值。本文件不读取前端文件；内容 I/O 由被注入的 adapter 执行。
 
 ## server/src/common/content-source.ts
 
@@ -280,21 +262,12 @@ loadConfig(环境对象，默认 process.env) 返回冻结 AppConfig。HOST 默�
 
 显示个人介绍的初始加载内容；引用本板块 assets/about.js 与本板块 CSS，共享资源见上方速查表。runtime.js 先于模块执行。内容和交互由本板块 TypeScript 填充，HTML 不请求 API；普通页面提供 noscript 提示，自测页不提供。
 
-## site/archive/assets/archive.ts
 
-加载后 GET /archive；成功按返回月份和记录渲染时间线与目录，空结果显示“还没有归档记录。”。日期保持字符串，不按浏览器时区换算。失败由共享入口显示重试并 ERROR。本页没有额外交互、全局挂载或文件访问。
-
-## site/archive/index.html
-
-显示归档的初始加载内容；引用本板块 assets/archive.js 与本板块 CSS，共享资源见上方速查表。runtime.js 先于模块执行。内容和交互由本板块 TypeScript 填充，HTML 不请求 API；普通页面提供 noscript 提示，自测页不提供。
 
 ## site/assets/css/about/about.css
 
 仅由 site/about/index.html 引用。
 
-## site/assets/css/archive/archive.css
-
-仅由 site/archive/index.html 引用。
 
 ## site/assets/css/common/base.css
 
@@ -350,7 +323,7 @@ loadConfig() 读取默认配置和 window.BLOG_CONFIG，返回冻结的 ClientCo
 
 ## site/assets/js/infrastructure/api.ts
 
-createApi(已验证配置) 返回 BlogApi：profile、projects、project、notes、note、life、archive、search、health。category 可省略；详情传入内容标识，search 传查询文字；各方法可收 AbortSignal。所有方法返回已验证 DTO Promise，无空值兜底。
+createApi(已验证配置) 返回 BlogApi：profile、projects、project、notes、note、life、search、health。category 可省略；详情传入内容标识，search 传查询文字；各方法可收 AbortSignal。所有方法返回已验证 DTO Promise，无空值兜底。
 
 request(端点,DTO 校验器,取消信号) 发 GET 并按配置设置超时：成功 JSON 的 data 通过 Schema.parse 后返回；非 2xx 只采用本地安全消息表与 traceId；JSON 或字段非法抛 contract；定时触发抛 timeout；调用者取消抛 abort；其余 fetch 失败抛 network。finally 总是清理计时器与监听。query(可选分类) 返回编码后的查询或空串。网络失败与超时不会返回空数组。本文件不打印日志，由页面/搜索调用者记录；异常预期由这些调用者接住。
 
@@ -396,7 +369,7 @@ projectCard(项目摘要,是否紧凑) 返回详情链接；noteRow(笔记摘要
 
 ## site/assets/js/types/contracts.ts
 
-定义前端独立 DTO 与解码器；运行时不读取后端源码。内容块按 kind 分派，未知种类抛 TypeError；对象字段完整校验。项目状态包含“待设备验证”；repositoryUrl 允许 null；图片只允许 /media/ 下的 WebP URL。listSchema(实体校验器) 返回列表校验器，要求 total 与返回条数相同。空列表合法；错误数据传给 HTTP 适配器的契约错误分支。本文件没有屏幕输出、网络请求或日志。
+定义前端独立 DTO 与解码器；运行时不读取后端源码。内容块按 kind 分派，未知种类抛 TypeError；对象字段完整校验。repositoryUrl 允许 null；图片只允许 /media/ 下的 WebP URL。listSchema(实体校验器) 返回列表校验器，要求 total 与返回条数相同。空列表合法；错误数据传给 HTTP 适配器的契约错误分支。本文件没有屏幕输出、网络请求或日志。
 
 ## site/assets/js/types/schema.ts
 
@@ -458,7 +431,7 @@ wireCode() 在渲染后给每个 pre 添加复制按钮，返回 void。点击�
 
 ## site/self-test/assets/self-test.ts
 
-加载时只创建页面，不自动请求。点击“运行检查”调用 runChecks()，禁用按钮、清空旧记录并依次调用 health/profile/projects/project(rope)/notes/note(os-reading)/life/archive/search(Agent)。每项返回并通过 DTO 即追加“通过”；失败追加安全消息、记录 WARNING，后续项继续。结束显示通过数/总数并恢复按钮。全部只读。检查基于当前首期示例标识；删除该条内容会让对应检查失败。必需页面节点缺失抛错误，不挂 window 接口。
+加载时只创建页面，不自动请求。点击“运行检查”调用 runChecks()，禁用按钮、清空旧记录并依次调用 health/profile/projects/project(shuimu)/notes/life/search(Agent)。每项返回并通过 DTO 即追加“通过”；失败追加安全消息、记录 WARNING，后续项继续。结束显示通过数/总数并恢复按钮。全部只读。检查基于当前示例项目标识 shuimu；删除该条内容会让对应检查失败。必需页面节点缺失抛错误，不挂 window 接口。
 
 ## site/self-test/index.html
 

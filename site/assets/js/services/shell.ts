@@ -4,9 +4,9 @@ import {icon} from './icons.js';
 import {escape} from './view.js';
 import {logger} from '../infrastructure/logger.js';
 /** Page names match section directory names and never depend on backend implementation. */
-export type PageName='index'|'projects'|'notes'|'life'|'archive'|'about'|'not-found'|'self-test';
+export type PageName='index'|'projects'|'notes'|'life'|'about'|'not-found'|'self-test';
 /** Navigation labels and paths are frontend presentation concerns. */
-const navigation:readonly [PageName,string,string,string][]=[['index','/','首页','home'],['projects','/projects/','项目档案','folder'],['notes','/notes/','学习与笔记','pen'],['life','/life/','校园与生活','camera'],['archive','/archive/','时间归档','archive'],['about','/about/','关于我','user']];
+const navigation:readonly [PageName,string,string,string][]=[['index','/','首页','home'],['projects','/projects/','项目档案','folder'],['notes','/notes/','学习与笔记','pen'],['life','/life/','校园与生活','camera'],['about','/about/','关于我','user']];
 
 /** Args: current section and client config. Returns: mounted main container; missing host throws explicit initialization error. Globals Used: document. Calls: wireShell. */
 export function mountShell(page:PageName,config:ClientConfig):HTMLElement{

@@ -4,10 +4,10 @@ import { array, dateSchema, enumeration, hrefSchema, integer, LIMITS, nullable, 
 import type { Schema } from './schema.js';
 
 /** Content entity DTOs are local to this package and communicate only through HTTP JSON. */
-export type ProjectCategory = 'Web 开发' | 'AI Agent' | '系统与算子';
+export type ProjectCategory = 'Web 开发' | 'AI Agent';
 export type NoteCategory = '开发记录' | '系统学习' | '学习随记';
 export type PhotoCategory = '排球' | '篮球' | '足球';
-export type ProjectStatus = '持续开发' | '已有实现' | '早期作品' | '待设备验证';
+export type ProjectStatus = '持续开发' | '已有实现' | '早期作品';
 export interface ListDto<T> { readonly items: readonly T[]; readonly total: number; }
 export interface LinkDto { readonly label: string; readonly href: string; }
 export type ContentBlockDto =
@@ -37,8 +37,6 @@ export interface PhotoDto {
   readonly imageUrl:string; readonly width:number; readonly height:number;
 }
 export interface LifeDto { readonly photos:readonly PhotoDto[]; readonly sections:readonly ContentSectionDto[]; }
-export interface ArchiveEntryDto { readonly type:'note'|'life'; readonly title:string; readonly date:string; readonly href:string; }
-export interface ArchiveMonthDto { readonly month:string; readonly entries:readonly ArchiveEntryDto[]; }
 export interface SearchResultDto { readonly type:'project'|'note'|'page'; readonly title:string; readonly href:string; readonly excerpt:string; }
 export interface HealthDto {readonly status:'ok'; readonly apiVersion:'v1';}
 
@@ -47,7 +45,7 @@ const title = text(LIMITS.title);
 const summary = text(LIMITS.summary);
 const body = text(LIMITS.text);
 const tags = array(text(LIMITS.tag),20);
-export const projectCategories = ['Web 开发','AI Agent','系统与算子'] as const;
+export const projectCategories = ['Web 开发','AI Agent'] as const;
 export const noteCategories = ['开发记录','系统学习','学习随记'] as const;
 export const photoCategories = ['排球','篮球','足球'] as const;
 const link:Schema<LinkDto> = object<LinkDto>({label:title,href:hrefSchema});
@@ -71,7 +69,7 @@ export const profileSchema:Schema<ProfileDto> = object<ProfileDto>({
   current:array(object({title,text:summary,href:hrefSchema}),20),
 });
 const projectFields = {slug:slugSchema,title,category:enumeration(projectCategories),summary,tags,
-  status:enumeration(['持续开发','已有实现','早期作品','待设备验证'] as const),updatedAt:dateSchema,repositoryUrl:nullable(refine(hrefSchema,value=>value.startsWith('https://')))};
+  status:enumeration(['持续开发','已有实现','早期作品'] as const),updatedAt:dateSchema,repositoryUrl:nullable(refine(hrefSchema,value=>value.startsWith('https://')))};
 const noteFields = {slug:slugSchema,title,category:enumeration(noteCategories),summary,tags,date:dateSchema,readingMinutes:integer(1,120)};
 export const projectSummarySchema:Schema<ProjectSummaryDto> = object<ProjectSummaryDto>(projectFields);
 export const projectSchema:Schema<ProjectDetailDto> = object<ProjectDetailDto>({...projectFields,sections:sectionsSchema});
@@ -80,8 +78,6 @@ export const noteSchema:Schema<NoteDetailDto> = object<NoteDetailDto>({...noteFi
 export const photoSchema:Schema<PhotoDto> = object<PhotoDto>({id:slugSchema,title,alt:summary,date:dateSchema,category:enumeration(photoCategories),
   imageUrl:refine(hrefSchema,value=>/^\/media\/[a-z0-9-]+\.webp$/.test(value)),width:integer(1,10000),height:integer(1,10000)});
 export const lifeSchema:Schema<LifeDto> = object<LifeDto>({photos:array(photoSchema),sections:sectionsSchema});
-export const archiveSchema:Schema<ArchiveMonthDto> = object<ArchiveMonthDto>({month:refine(text(7),value=>/^\d{4}-(0[1-9]|1[0-2])$/.test(value)),
-  entries:array(object<ArchiveEntryDto>({type:enumeration(['note','life'] as const),title,date:dateSchema,href:hrefSchema}))});
 export const searchSchema:Schema<SearchResultDto> = object<SearchResultDto>({type:enumeration(['project','note','page'] as const),title,href:hrefSchema,excerpt:text(160,true)});
 export const healthSchema:Schema<HealthDto> = object<HealthDto>({status:enumeration(['ok'] as const),apiVersion:enumeration(['v1'] as const)});
 /** Args: an entity schema. Returns: strict list response decoder including matching total; oversize lists throw. Globals Used: LIMITS. Calls: object, array, integer, refine. */

@@ -12,7 +12,6 @@ import {createModule as profileModule} from './api/profile/profile.module.js';
 import {createModule as projectsModule} from './api/projects/projects.module.js';
 import {createModule as notesModule} from './api/notes/notes.module.js';
 import {createModule as lifeModule} from './api/life/life.module.js';
-import {createModule as archiveModule} from './api/archive/archive.module.js';
 import {createModule as searchModule} from './api/search/search.module.js';
 import {createModule as healthModule} from './api/health/health.module.js';
 import {createModule as mediaModule} from './api/media/media.module.js';
@@ -29,7 +28,7 @@ export function createApp(config:AppConfig,logger:Logger):Server {
   const source=new JsonContentSource(config.contentDir,config.contentMaxBytes);
   const profile=profileModule(source),projects=projectsModule(source),notes=notesModule(source),life=lifeModule(source);
   const routes=[...profile.routes,...projects.routes,...notes.routes,...life.routes,
-    ...archiveModule(notes.service,life.service),...searchModule(profile.service,projects.service,notes.service,life.service,config.searchLimit),
+    ...searchModule(profile.service,projects.service,notes.service,life.service,config.searchLimit),
     ...healthModule([()=>profile.service.getProfile(),()=>projects.service.all(),()=>notes.service.all(),()=>life.service.getLife()]),
     ...mediaModule(config.mediaDir,config.contentMaxBytes,life.service),
     {pattern:/^\/feed\.xml$/,handle:async({url}:{url:URL})=>{validateQuery(url.searchParams,[]);return {data:serializeFeed((await notes.service.list()).items,config.publicOrigin),contentType:'application/rss+xml; charset=utf-8'};}},
