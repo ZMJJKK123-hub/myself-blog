@@ -1,0 +1,25 @@
+// DTO types describe all data allowed into finite UI templates.
+import type {ContentSectionDto,ProjectSummaryDto,NoteSummaryDto,PhotoDto} from '../types/contracts.js';
+// Icons are trusted static markup, independent of content.
+import {icon} from './icons.js';
+
+/** Args: untrusted text. Returns: escaped HTML text/attribute value. Globals Used: None. Calls: String.replace. */
+export function escape(value:string|number):string{return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]??char));}
+/** Args: validated target and label. Returns: safe anchor; external links open isolated tabs. Globals Used: None. Calls: escape, icon. */
+export function link(href:string,label:string):string{return '<a href="'+escape(href)+'"'+(href.startsWith('https:')?' target="_blank" rel="noopener noreferrer"':'')+'>'+escape(label)+(href.startsWith('https:')?icon('external'):'')+'</a>';}
+/** Args: section ID/title. Returns: linked H2; IDs come from validated slugs or fixed page constants. Globals Used: None. Calls: escape. */
+export function heading(id:string,title:string):string{return '<h2 id="'+escape(id)+'">'+escape(title)+'<a class="heading-anchor" href="#'+escape(id)+'" aria-label="链接至'+escape(title)+'">#</a></h2>';}
+/** Args: tags. Returns: escaped badges, empty for empty input. Globals Used: None. Calls: escape. */
+export function tags(values:readonly string[]):string{return '<div class="tags">'+values.map(tag=>'<span class="tag">'+escape(tag)+'</span>').join('')+'</div>';}
+/** Args: content sections. Returns: finite markup; text never becomes raw HTML. Globals Used: None. Calls: heading, escape, link. */
+export function sections(values:readonly ContentSectionDto[]):string{return values.map(section=>'<section>'+heading(section.id,section.title)+section.blocks.map(block=>{switch(block.kind){case 'paragraph':return '<p>'+escape(block.text)+'</p>';case 'list':return '<ul>'+block.items.map(text=>'<li>'+escape(text)+'</li>').join('')+'</ul>';case 'code':return '<pre><code>'+escape(block.code)+'</code></pre>';case 'callout':return '<aside class="callout"><strong>'+escape(block.title)+'</strong><p>'+escape(block.text)+'</p></aside>';case 'links':return '<p class="content-links">'+block.items.map(item=>link(item.href,item.label)).join(' ')+'</p>';}}).join('')+'</section>').join('');}
+/** Project icon map is presentation data, separate from project contents. */
+const projectIcons:Readonly<Record<string,string>>={shuimu:'orbit','task-log':'checks',xiumi:'terminal','mod-forge':'blocks',valorant:'crosshair',rope:'cpu'};
+/** Args: summary and optional compact layout. Returns: linked project preview; no backend work. Globals Used: projectIcons. Calls: icon, tags, escape. */
+export function projectCard(project:ProjectSummaryDto,compact:boolean=false):string{return '<a class="project-card '+(compact?'compact':'')+'" href="/projects/'+escape(project.slug)+'/"><span class="project-icon '+escape(project.slug)+'">'+icon(projectIcons[project.slug]??'folder')+'</span><div class="project-info"><h3>'+escape(project.title)+'</h3><p>'+escape(project.summary)+'</p>'+tags(project.tags)+'</div><span class="project-arrow">'+icon('arrow')+'</span></a>';}
+/** Args: note summary. Returns: article list row with original date. Globals Used: None. Calls: escape, icon. */
+export function noteRow(note:NoteSummaryDto):string{return '<article class="post-row"><div class="post-date"><time datetime="'+note.date+'">'+note.date.slice(5).replace('-','.')+'</time><span>'+note.date.slice(0,4)+'</span></div><div class="post-info"><div class="post-meta">'+escape(note.category)+'<span>·</span>'+note.readingMinutes+' 分钟</div><h3><a href="/notes/'+escape(note.slug)+'/">'+escape(note.title)+'</a></h3><p>'+escape(note.summary)+'</p></div><span class="post-arrow">'+icon('arrow')+'</span></article>';}
+/** Args: photo DTO, backend media origin, optional gallery index. Returns: responsive accessible image tile. Globals Used: None. Calls: escape, icon. */
+export function photoCard(photo:PhotoDto,origin:string,index:number):string{return '<figure id="'+photo.id+'"><button class="photo-button" data-photo-index="'+index+'" aria-label="放大照片：'+escape(photo.title)+'"><img src="'+escape(origin+photo.imageUrl)+'" alt="'+escape(photo.alt)+'" width="'+photo.width+'" height="'+photo.height+'" loading="lazy">'+icon('search')+'</button><figcaption><strong>'+escape(photo.title)+'</strong><time datetime="'+photo.date+'">'+photo.date.replaceAll('-','.')+'</time></figcaption></figure>';}
+/** Args: categories and selected value. Returns: filter controls; omitted selected means all. Globals Used: None. Calls: escape. */
+export function filterBar(values:readonly string[],selected:string='全部'):string{return '<div class="filter-bar" role="group" aria-label="分类筛选">'+['全部',...values].map(value=>'<button class="filter-button '+(selected===value?'active':'')+'" data-filter="'+escape(value)+'" aria-pressed="'+(selected===value)+'">'+escape(value)+'</button>').join('')+'</div>';}

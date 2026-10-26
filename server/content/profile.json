@@ -1,0 +1,98 @@
+{
+  "name": "李义鑫",
+  "englishName": "LI YIXIN",
+  "tagline": "在代码里探索，在生活里积累。",
+  "updatedAt": "2026-10-26",
+  "interests": [
+    "软件开发",
+    "AI Agent",
+    "计算机系统"
+  ],
+  "links": [
+    {
+      "label": "GitHub",
+      "href": "https://github.com/ZMJJKK123-hub"
+    }
+  ],
+  "current": [
+    {
+      "title": "打磨日志清单",
+      "text": "把 AI 任务操作与审核、恢复流程接起来。",
+      "href": "/projects/task-log/"
+    },
+    {
+      "title": "建设水木科协网站",
+      "text": "继续整理内容，完善门户体验。",
+      "href": "/projects/shuimu/"
+    },
+    {
+      "title": "沿源码学习操作系统",
+      "text": "从 FreeRTOS 与 Linux 的调度路径读起。",
+      "href": "/notes/os-reading/"
+    }
+  ],
+  "sections": [
+    {
+      "id": "intro",
+      "title": "一点自我介绍",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "我叫李义鑫，正在围绕软件工程学习，也在补充电子与人工智能相关知识。喜欢把想法写成能运行的小工具，在做项目的过程中理解系统。"
+        },
+        {
+          "kind": "paragraph",
+          "text": "希望学到的东西能够走出笔记，变成可以使用、也可以继续改进的作品。"
+        }
+      ]
+    },
+    {
+      "id": "learning",
+      "title": "正在学习",
+      "blocks": [
+        {
+          "kind": "list",
+          "items": [
+            "软件工程：C / C++、Web 基础、后端接口与可维护的工程结构。",
+            "计算机系统：操作系统源码、体系结构与软硬件之间的联系。",
+            "人工智能：工具调用、Agent 工作流、CANN 与算子开发。",
+            "基础课程：数学、物理，以及电子相关课程与实验。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "campus",
+      "title": "校园里的我",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "参与水木科协的网站与智能体开发，也参与体育部和校园活动。排球、篮球、足球、羽毛球与长跑，构成了代码之外很具体的日常。"
+        },
+        {
+          "kind": "paragraph",
+          "text": "也曾协助老师开展版画学习活动，参与劳动美育实践展览介绍。动手做事和跟同学一起做事，都值得记录。"
+        }
+      ]
+    },
+    {
+      "id": "this-site",
+      "title": "关于这个小站",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "这里收录个人项目介绍、学习笔记和校园生活。以文字为主，保留适合安静阅读的布局；项目进度与文章都会继续更新。"
+        },
+        {
+          "kind": "links",
+          "items": [
+            {
+              "label": "页面风格参考：韩文弢的学术主页",
+              "href": "https://pacman.cs.tsinghua.edu.cn/~hanwentao/"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

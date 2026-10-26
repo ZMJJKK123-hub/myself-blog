@@ -1,0 +1,76 @@
+{
+  "photos": [
+    {
+      "id": "volleyball-1024",
+      "title": "周末，排球场见",
+      "alt": "10 月 24 日排球训练结束后的同学合影",
+      "date": "2026-10-24",
+      "category": "排球",
+      "imageUrl": "/media/volleyball-1024.webp",
+      "width": 1200,
+      "height": 1600
+    },
+    {
+      "id": "volleyball-1011",
+      "title": "把球接起来",
+      "alt": "10 月 11 日的排球训练记录",
+      "date": "2026-10-11",
+      "category": "排球",
+      "imageUrl": "/media/volleyball-1011.webp",
+      "width": 1600,
+      "height": 1200
+    },
+    {
+      "id": "volleyball-1006",
+      "title": "又一次训练",
+      "alt": "10 月 6 日的排球训练记录",
+      "date": "2026-10-06",
+      "category": "排球",
+      "imageUrl": "/media/volleyball-1006.webp",
+      "width": 1600,
+      "height": 1200
+    },
+    {
+      "id": "football-1006",
+      "title": "在阳光下踢球",
+      "alt": "10 月 6 日足球训练后的同学合影",
+      "date": "2026-10-06",
+      "category": "足球",
+      "imageUrl": "/media/football-1006.webp",
+      "width": 1084,
+      "height": 615
+    },
+    {
+      "id": "basketball-0928",
+      "title": "一起打完这场球",
+      "alt": "9 月 28 日篮球班赛后的全体合影",
+      "date": "2026-09-28",
+      "category": "篮球",
+      "imageUrl": "/media/basketball-0928.webp",
+      "width": 1600,
+      "height": 1200
+    },
+    {
+      "id": "volleyball-0926",
+      "title": "开学后的球场",
+      "alt": "9 月 26 日的排球训练记录",
+      "date": "2026-09-26",
+      "category": "排球",
+      "imageUrl": "/media/volleyball-0926.webp",
+      "width": 1600,
+      "height": 1200
+    }
+  ],
+  "sections": [
+    {
+      "id": "campus",
+      "title": "校园片段",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "除了训练与班赛，也参加长跑打卡、羽毛球活动，协助版画学习和劳动美育实践展览介绍。这些看起来很小的事，也是校园生活里想留下来的部分。"
+        }
+      ]
+    }
+  ]
+}

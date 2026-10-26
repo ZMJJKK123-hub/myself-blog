@@ -5,10 +5,23 @@
   "type": "module",
   "description": "李义鑫的个人主页、项目档案与学习笔记",
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "check": "node scripts/check.mjs",
-    "dev": "node scripts/serve.mjs",
-    "start": "node scripts/serve.mjs"
+    "build:site": "tsc -p site",
+    "build:server": "tsc -p server",
+    "build": "npm run build:site && npm run build:server",
+    "typecheck": "tsc -p site --noEmit && tsc -p server --noEmit",
+    "test": "npm run build && node --test tests/api.test.mjs",
+    "test:browser": "node --test tests/browser.test.mjs",
+    "check": "npm run typecheck && npm test",
+    "dev": "node scripts/dev.mjs",
+    "start:site": "node scripts/serve.mjs",
+    "start:server": "npm --prefix server start"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "playwright": "^1.56.1",
+    "typescript": "^5.9.3"
+  }
 }

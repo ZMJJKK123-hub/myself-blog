@@ -5,3 +5,8 @@ node_modules/
 *.log
 .env
 .env.*
+agent.md
+server/dist/
+site/**/*.js
+site/**/*.js.map
+coverage/

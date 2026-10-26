@@ -1,0 +1,397 @@
+[
+  {
+    "slug": "shuimu",
+    "title": "水木科协 · 数字实验场",
+    "category": "Web 开发",
+    "summary": "面向学生的技术探索与共创空间，把科协介绍、精选推送和学习资源连接起来。",
+    "tags": [
+      "TypeScript",
+      "NestJS",
+      "Web"
+    ],
+    "status": "持续开发",
+    "updatedAt": "2026-10-26",
+    "repositoryUrl": "https://github.com/ZMJJKK123-hub/shuimu-college-web",
+    "sections": [
+      {
+        "id": "section-0",
+        "title": "缘起",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "参与水木书院学生科学技术协会网站开发，希望把科协的技术探索与内容分享放到一个清晰、可持续维护的入口里。"
+          }
+        ]
+      },
+      {
+        "id": "section-1",
+        "title": "现在能做什么",
+        "blocks": [
+          {
+            "kind": "list",
+            "items": [
+              "首页介绍科协，并展示精选推送与技术入口。",
+              "提供普通用户注册、登录和头像上传，以及独立的管理员入口。",
+              "整理学习资料与工具，保留后续业务扩展的空间。",
+              "以几何标识、深墨蓝与冰青色组织视觉，加入流线、轨道和滚动反馈。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "title": "实现方式",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "采用静态门户与后端 API 配合的结构。前端以 TypeScript 编写，再编译为浏览器脚本；后端使用 NestJS。普通用户和管理员使用独立的认证路径。"
+          },
+          {
+            "kind": "code",
+            "language": "text",
+            "code": "静态门户 → 后端 API → 渐进业务"
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "title": "开发记录",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "最近的工作集中在首页视觉和交互打磨、精选内容轮播，以及共享动效的复用。网站仍在迭代，资料页也在继续整理。"
+          },
+          {
+            "kind": "paragraph",
+            "text": "此处是项目介绍，实际能力与部署状态以项目仓库中的 README 为准。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "task-log",
+    "title": "日志清单",
+    "category": "Web 开发",
+    "summary": "从任务和周日程出发，探索带确认、驳回与恢复预览的 AI 任务管理。",
+    "tags": [
+      "TypeScript",
+      "NestJS",
+      "AI"
+    ],
+    "status": "持续开发",
+    "updatedAt": "2026-10-26",
+    "repositoryUrl": "https://github.com/ZMJJKK123-hub/time-schedule",
+    "sections": [
+      {
+        "id": "section-0",
+        "title": "缘起",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "把日常安排从分散的记录整理成可查看、可修改的任务清单，并尝试让自然语言成为新增任务的入口。"
+          }
+        ]
+      },
+      {
+        "id": "section-1",
+        "title": "现在能做什么",
+        "blocks": [
+          {
+            "kind": "list",
+            "items": [
+              "账号登录、任务增删改查、完成切换、过滤和批量操作。",
+              "只读每日清单、周日程表和个人设置。",
+              "配置模型提供商，通过 AI 输入生成任务操作。",
+              "在邮箱式审核页面查看结果，确认或驳回，并预览恢复内容。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "title": "值得记录的设计",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "人工和 AI 操作经过相同的任务规则与日志入口。每次模型运行保留操作记录，审核结果也写入日志；恢复前检查任务状态，避免直接覆盖已经发生的外部变化。"
+          },
+          {
+            "kind": "code",
+            "language": "text",
+            "code": "自然语言 → 操作与日志 → 审核 / 恢复"
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "title": "当前边界",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "核心持久化仍为 JSON 文件，使用单一写入进程。数据库迁移、离线同步与桌面端尚属后续方向。周日程对于跨日和纯日期区间也有展示限制。"
+          },
+          {
+            "kind": "paragraph",
+            "text": "本机微信导入工具与网站独立，现阶段依赖手动打开指定会话，不代表全会话或离线消息同步能力。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "xiumi",
+    "title": "xiumi-agent",
+    "category": "AI Agent",
+    "summary": "在终端里提出需求，让 Agent 驱动浏览器完成公众号写稿、排版与草稿保存。",
+    "tags": [
+      "Python",
+      "Textual",
+      "CDP"
+    ],
+    "status": "已有实现",
+    "updatedAt": "2026-10-26",
+    "repositoryUrl": "https://github.com/ZMJJKK123-hub/xiumi-creator",
+    "sections": [
+      {
+        "id": "section-0",
+        "title": "缘起",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "公众号内容制作涉及写稿、排版、配图和保存，希望把这串连续操作整理成一个可以通过自然语言发起的工作流。"
+          }
+        ]
+      },
+      {
+        "id": "section-1",
+        "title": "工作流",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "终端 TUI 接收任务，Agent 主循环调用插件工具，通过本机 Edge 浏览器与秀米编辑器交互，目标是完成从内容到排版草稿的过程。"
+          },
+          {
+            "kind": "code",
+            "language": "text",
+            "code": "Textual TUI → Agent + 插件 → Edge / 秀米"
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "title": "实现方式",
+        "blocks": [
+          {
+            "kind": "list",
+            "items": [
+              "Python 与 Textual 构建终端界面。",
+              "核心循环通过 OpenAI 兼容的工具调用接口组织模型行为。",
+              "浏览器、登录和编辑器能力按插件拆分。",
+              "使用 CDP 处理截图、上传文件和真实按键等交互。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "title": "维护思路",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "页面选择器集中管理，界面变化时有明确的维护位置。登录信息经专门的登录界面传递，不作为普通任务文本送入模型。实际使用仍依赖本机浏览器、网站状态与模型配置。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "mod-forge",
+    "title": "MOD Forge · skill-agent",
+    "category": "AI Agent",
+    "summary": "围绕 Minecraft Forge 模组开发，把领域技能、代码生成、构建和测试串成一条链。",
+    "tags": [
+      "Python",
+      "FastAPI",
+      "Java"
+    ],
+    "status": "已有实现",
+    "updatedAt": "2026-10-26",
+    "repositoryUrl": "https://github.com/ZMJJKK123-hub/skill-agent",
+    "sections": [
+      {
+        "id": "section-0",
+        "title": "缘起",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "把游戏 MOD 制作中的知识和工具整理给 Agent：从理解需求开始，加载领域资料、编写 Java 代码与资源文件，再调用构建与测试工具。"
+          }
+        ]
+      },
+      {
+        "id": "section-1",
+        "title": "项目结构",
+        "blocks": [
+          {
+            "kind": "list",
+            "items": [
+              "核心引擎：模型循环、工具注册与领域技能库。",
+              "网页版：FastAPI 后端与 React / Next.js 前端，提供会话、过程查看与产物下载入口。",
+              "构建链：调用 Gradle 构建，并为 GameTest 测试与编译修复提供工具。",
+              "外部接入：以兼容 API 的形式提供 Agent 能力。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "title": "开发闭环",
+        "blocks": [
+          {
+            "kind": "code",
+            "language": "text",
+            "code": "需求与技能 → 代码与资源 → 构建与测试"
+          },
+          {
+            "kind": "paragraph",
+            "text": "对这个项目来说，生成代码只是中间步骤。构建回执、测试输出和最终产物，才让整个流程具有可检查的结果。"
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "title": "当前边界",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "项目面向 Windows 环境，并有固定的 Minecraft、Forge 与 Java 目标版本。运行前需要配置相应工具链和模型接口，任意需求的成功率并未在本博客中做额外承诺。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "valorant",
+    "title": "Valorant 游戏资料站",
+    "category": "Web 开发",
+    "summary": "第一个 Web 项目：用 Streamlit 整理英雄、武器和游戏资料，练习完整页面开发。",
+    "tags": [
+      "Python",
+      "Streamlit",
+      "Pandas"
+    ],
+    "status": "早期作品",
+    "updatedAt": "2026-10-26",
+    "repositoryUrl": "https://github.com/ZMJJKK123-hub/Valorant-WEBSITE",
+    "sections": [
+      {
+        "id": "section-0",
+        "title": "第一个 Web 项目",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "项目 README 里写着“My first web”。从自己熟悉的游戏出发，尝试把英雄和武器资料做成可浏览的页面，也是早期探索 Web 开发的一份记录。"
+          }
+        ]
+      },
+      {
+        "id": "section-1",
+        "title": "页面内容",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "代码中包含英雄分类展示、武器卡片、图片处理、资料表读取和评论区等页面逻辑，并尝试了用户注册与本地数据保存。"
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "title": "使用的工具",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "使用 Streamlit 快速搭建页面，Pandas 处理表格，Pillow 处理图片。视觉上围绕游戏的红色与深色背景展开。"
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "title": "回看这个起点",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "保留这份作品，是为了记录从一个长脚本开始，到后来逐渐关注模块、类型、接口和可维护性的过程。它作为早期学习作品展示，不作为生产服务运行。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "rope",
+    "title": "RotaryPosEmb 算子",
+    "category": "系统与算子",
+    "summary": "CANN 赛题实践：围绕旋转位置编码，探索 Ascend C 中的精度、对齐与多核划分。",
+    "tags": [
+      "Ascend C",
+      "C++",
+      "RoPE"
+    ],
+    "status": "待设备验证",
+    "updatedAt": "2026-10-26",
+    "repositoryUrl": null,
+    "sections": [
+      {
+        "id": "section-0",
+        "title": "问题背景",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "围绕 RotaryPosEmb 赛题进行实现练习。输入张量为四维结构，结合位置索引与 theta 参数，对特征前后两半进行旋转，输出保持原形状。"
+          }
+        ]
+      },
+      {
+        "id": "section-1",
+        "title": "实现关注点",
+        "blocks": [
+          {
+            "kind": "list",
+            "items": [
+              "float16 与 float32 输入，以及中间角度计算的精度。",
+              "对齐与非对齐维度下的数据搬运。",
+              "长位置索引下三角函数的数值误差。",
+              "按行划分任务，使用可用核心并分配计算。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "title": "从资料到代码",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "本地已有赛题整理、设计交接、参考脚本与 kernel.asc 实现。当前实现中包含逆频率表缓存、三角函数计算和多核启动逻辑。"
+          },
+          {
+            "kind": "code",
+            "language": "text",
+            "code": "输入 x + positions + theta\n        ↓\n逆频率与角度计算\n        ↓\n旋转配对、分块计算\n        ↓\n同形状输出 y"
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "title": "验证状态",
+        "blocks": [
+          {
+            "kind": "callout",
+            "title": "实现草稿，待设备验证",
+            "text": "本地交接文档保留了较早的空壳状态，当前代码已有变化。本博客根据实际文件记录进度，但没有依据宣称已通过 NPU 编译、赛题精度测试或性能测试。"
+          }
+        ]
+      }
+    ]
+  }
+]

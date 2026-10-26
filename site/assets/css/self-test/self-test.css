@@ -1,0 +1,1 @@
+.check-pass{color:var(--green)}.check-fail{color:var(--primary)}#check-results{font-size:.7rem}.retry-button:disabled{opacity:.5;cursor:wait}

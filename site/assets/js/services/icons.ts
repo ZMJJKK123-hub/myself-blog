@@ -1,0 +1,13 @@
+/** Lucide-style path primitives are trusted UI assets, never content from API responses. */
+const paths:Readonly<Record<string,string>>={
+  book:'<path d="M12 7v14m0-14C9 4 5 4 2 5v14c3-1 7-1 10 2 3-3 7-3 10-2V5c-3-1-7-1-10 2Z"/>',
+  home:'<path d="m3 10 9-7 9 7v10H15v-7H9v7H3Z"/>',folder:'<path d="M3 7h7l2-3h9v16H3V4h6l3 3"/>',pen:'<path d="m16 3 5 5L9 20l-6 1 1-6L16 3Zm-2 2 5 5"/>',
+  camera:'<path d="m8 5 2-2h4l2 2h6v16H2V5Z"/><circle cx="12" cy="12" r="4"/>',archive:'<path d="M3 3h18v4H3Zm2 4v14h14V7M9 12h6"/>',user:'<circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
+  search:'<circle cx="10.5" cy="10.5" r="7.5"/><path d="m16 16 5 5"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/>',moon:'<path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/>',
+  github:'<path d="M9 19c-4 1-4-2-6-3m13 6v-4a4 4 0 0 0-1-3c3-.4 6-2 6-7a6 6 0 0 0-1-4 5 5 0 0 0 0-3s-2 0-4 2a14 14 0 0 0-8 0C6 1 4 1 4 1a5 5 0 0 0 0 3 6 6 0 0 0-1 4c0 5 3 6.6 6 7a4 4 0 0 0-1 3v4"/>',
+  rss:'<path d="M4 4a16 16 0 0 1 16 16M4 11a9 9 0 0 1 9 9"/><circle cx="5" cy="19" r="1"/>',arrow:'<path d="M4 12h16m-6-6 6 6-6 6"/>',external:'<path d="M14 3h7v7m0-7L10 14m0-11H3v18h18v-7"/>',chevron:'<path d="m9 5 7 7-7 7"/>',menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',close:'<path d="m6 6 12 12M6 18 18 6"/>',list:'<path d="M9 6h12M9 12h12M9 18h12M3 6h.01M3 12h.01M3 18h.01"/>',
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',up:'<path d="m6 12 6-6 6 6m-6-6v14"/>',
+  orbit:'<circle cx="12" cy="12" r="3"/><ellipse cx="12" cy="12" rx="10" ry="5" transform="rotate(-35 12 12)"/>',checks:'<path d="m3 6 2 2 3-4m-5 9 2 2 3-4M11 6h10M11 13h10M11 20h10M4 20h3"/>',terminal:'<rect x="2" y="3" width="20" height="18" rx="2"/><path d="m6 8 4 4-4 4m7 0h5"/>',blocks:'<path d="M3 3h7v7H3Zm11 0h7v7h-7ZM3 14h7v7H3Zm11 0h7v7h-7Z"/>',crosshair:'<circle cx="12" cy="12" r="8"/><path d="M12 2v6m0 8v6M2 12h6m8 0h6"/>',cpu:'<rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 1v4m6-4v4M9 19v4m6-4v4M1 9h4m-4 6h4m14-6h4m-4 6h4M9 9h6v6H9Z"/>',leaf:'<path d="M20 3C12 2 4 5 4 13a7 7 0 0 0 7 7c7 0 10-8 9-17ZM3 21 15 9"/>',copy:'<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/>',
+};
+/** Args: known icon name. Returns: decorative SVG; unknown names fall back to book. Globals Used: paths. Calls: None. */
+export function icon(name:string):string{return '<svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(paths[name]??paths['book'])+'</svg>';}

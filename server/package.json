@@ -1,0 +1,5 @@
+{
+  "name": "liyixin-blog-api", "private": true, "type": "module",
+  "scripts": { "build": "tsc -p .", "typecheck": "tsc -p . --noEmit", "start": "node dist/main.js" },
+  "engines": { "node": ">=22" }
+}

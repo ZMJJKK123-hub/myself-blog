@@ -1,20 +1,27 @@
+// Static file transport serves only frontend assets; business API runs in a separate process.
 import http from 'node:http';
 import {readFile,stat} from 'node:fs/promises';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
-import {spawnSync} from 'node:child_process';
-const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../dist');
-const port=Number(process.env.PORT||4173);
-if(process.argv.includes('--build')){const result=spawnSync(process.execPath,['scripts/build.mjs'],{stdio:'inherit',cwd:path.dirname(root)});if(result.status!==0)process.exit(result.status||1);}
-const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.xml':'application/xml; charset=utf-8','.svg':'image/svg+xml','.webp':'image/webp','.txt':'text/plain; charset=utf-8'};
+// Tooling has its own unified configuration and logger.
+import {config} from './dev.config.mjs';
+import {logger} from './logger.mjs';
+
+/** The frontend root is the only directory this preview server can read. */
+const root=path.join(config.root,'site');
+const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml'};
+const sections=['projects','notes','life','archive','about','not-found','self-test'];
 http.createServer(async(req,res)=>{
   try{
-    const url=new URL(req.url,'http://localhost');
-    const requested=path.resolve(root,'.'+decodeURIComponent(url.pathname));
-    if(requested!==root&&!requested.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}
-    let file=requested;
-    try{if((await stat(file)).isDirectory())file=path.join(file,'index.html');await stat(file);}catch{res.writeHead(404,{'Content-Type':'text/html; charset=utf-8'});res.end(await readFile(path.join(root,'404.html')));return;}
-    res.writeHead(200,{'Content-Type':types[path.extname(file)]||'application/octet-stream','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
-    res.end(await readFile(file));
-  }catch{res.writeHead(500);res.end('Internal server error');}
-}).listen(port,'127.0.0.1',()=>console.log(`Local: http://localhost:${port}/`));
+    const url=new URL(req.url??'/','http://localhost');let pathname=decodeURIComponent(url.pathname);
+    if(pathname==='/assets/js/config/runtime.js'){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end('window.BLOG_CONFIG=Object.assign('+JSON.stringify({apiBase:'http://127.0.0.1:'+config.apiPort+'/api/v1',mediaOrigin:'http://127.0.0.1:'+config.apiPort})+',window.BLOG_CONFIG??{});');return;}
+    if(pathname==='/feed.xml'){res.writeHead(307,{Location:'http://127.0.0.1:'+config.apiPort+'/feed.xml'});res.end();return;}
+    if(pathname==='/')pathname='/index/index.html';
+    else if(sections.some(section=>pathname==='/'+section||pathname==='/'+section+'/'))pathname=pathname.replace(/\/$/,'')+'/index.html';
+    else if(/^\/(projects|notes)\/[^/.]+\/?$/.test(pathname))pathname='/'+pathname.split('/')[1]+'/detail.html';
+    let file=path.resolve(root,'.'+pathname);let status=200;
+    if(!file.startsWith(root+path.sep)||!Object.hasOwn(mime,path.extname(file)))status=404;
+    else try{if(!(await stat(file)).isFile())status=404;}catch(cause){if(cause&&typeof cause==='object'&&'code' in cause&&cause.code==='ENOENT')status=404;else throw cause;}
+    if(status===404)file=path.join(root,'not-found/index.html');
+    res.writeHead(status,{'Content-Type':mime[path.extname(file)]??'application/octet-stream','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(req.method==='HEAD'?undefined:await readFile(file));
+  }catch(cause){logger.error('static_request_failed',cause);res.writeHead(500);res.end('Preview unavailable');}
+}).on('error',cause=>{logger.error('static_server_failed',cause);process.exitCode=1;}).listen(config.sitePort,config.host,()=>logger.info({event:'preview_ready',url:'http://localhost:'+config.sitePort+'/'}));

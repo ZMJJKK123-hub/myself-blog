@@ -1,6 +1,6 @@
 # 博客 HTTP 与模块契约 v1
 
-状态：Phase 1 设计稿。协议地址、媒体地址、超时、搜索上限通过两端各自的唯一配置注入。代码实现等待架构确认。
+状态：已按确认方案实现。协议地址、媒体地址、超时、搜索上限通过两端各自的唯一配置注入；两端不存在运行时源码导入。
 
 ## 1. 公共 HTTP 约定
 
@@ -134,7 +134,7 @@ interface HealthDto { readonly status: 'ok'; readonly apiVersion: 'v1'; }
 | `GET /search` | `q: string` | `ListDto<SearchResultDto>` | trim 后 1～80 字符，NFKC 与小写归一，按空白拆词并取交集；标题命中优先，再按稳定展示顺序，最多 20 项 |
 | `GET /health` | 无 | `HealthDto` | 不返回内部配置 |
 
-`/feed.xml` 返回 `application/rss+xml`，成功 200；内容不可用返回 503 安全文本。`/media/{filename}` 返回白名单图片及匹配的 MIME；未知文件 404，解码失败或路径分隔符输入 400。两者不使用 JSON 成功包装。
+`/feed.xml` 返回 `application/rss+xml`，成功 200；内容不可用返回 503 统一 JSON 错误。`/media/{filename}` 返回白名单图片及匹配的 MIME；未知文件 404，解码失败或路径分隔符输入 400。两者不使用 JSON 成功包装，失败使用统一 JSON 错误。
 
 列表 HTTP 示例：
 
@@ -183,9 +183,9 @@ interface SearchService { search(query: string): Promise<ListDto<SearchResultDto
 interface HealthService { check(): Promise<HealthDto>; }
 ```
 
-- Repository 成功时返回已验证 DTO；文件缺失、读取失败、JSON 无效或字段非法抛 `ContentUnavailableError`，包含安全资源标识与 cause。不能返回伪造空数据。
-- `ProjectsService.get`、`NotesService.get` 查不到合法 slug 时抛 `ContentNotFoundError`；不触发任意路径访问。
-- Controller 的 DTO 校验失败抛 `InvalidQueryError` 或 `InvalidSlugError`，不调用业务层。
+- Repository 成功时返回已验证 DTO；文件缺失、读取失败、JSON 无效或字段非法抛 `BlogError('CONTENT_UNAVAILABLE', cause, resource)`，包含安全资源标识与 cause。不能返回伪造空数据。
+- `ProjectsService.get`、`NotesService.get` 查不到合法 slug 时抛 `BlogError('NOT_FOUND')`；不触发任意路径访问。
+- Controller 的 DTO 校验失败抛 code 为 `INVALID_QUERY` 或 `INVALID_SLUG` 的 BlogError，不调用业务层。
 - Archive、Search 通过注入的只读内容查询接口组合数据。其 repository 文件承载该板块的只读接口/适配，不能直接读取别的板块内部路径。
 - Health 通过注入的只读状态接口检查启动后的内容可用性；不会扫描桌面或暴露路径。
 - 顶层异常边界捕获已知错误并映射状态码；未知错误输出安全消息，并通过统一 logger 记录 cause 与堆栈。
@@ -194,6 +194,7 @@ interface HealthService { check(): Promise<HealthDto>; }
 
 ```ts
 interface BlogApi {
+  health(signal?: AbortSignal): Promise<HealthDto>;
   profile(signal?: AbortSignal): Promise<ProfileDto>;
   projects(category?: ProjectCategory, signal?: AbortSignal): Promise<ListDto<ProjectSummaryDto>>;
   project(slug: Slug, signal?: AbortSignal): Promise<ProjectDetailDto>;
@@ -205,8 +206,8 @@ interface BlogApi {
 }
 ```
 
-- HTTP 非 2xx 抛 `ApiRequestError`，保留 code、status 和 traceId；响应结构不符抛 `ApiContractError`。
-- 网络失败、超时抛 `ApiNetworkError`，分别标记 reason；主动取消抛可辨识的 `ApiAbortError`，搜索服务仅将主动取消作为正常控制流。
+- HTTP 非 2xx 抛 kind 为 `http` 的 `ApiError`，保留已知 code、status 和 traceId；未知错误码归一到 `INTERNAL_ERROR`，响应结构不符为 kind=`contract`。
+- 网络失败、超时分别为 kind=`network`、`timeout`；主动取消为 kind=`abort` 的 `ApiError`，搜索服务仅将主动取消作为正常控制流。原异常保留为 cause。
 - 页面的加载、成功、空态、失败与重试分别渲染；失败不得用空数组替代。
 - 搜索输入为空时展示入口提示；新搜索取消旧请求并核验请求序号，防止旧响应覆盖新结果。
 - 浏览器不导入内容源，不调用本机文件系统，不导入后端模块；接口替身也必须返回相同 DTO。

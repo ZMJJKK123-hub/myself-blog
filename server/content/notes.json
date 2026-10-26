@@ -1,0 +1,341 @@
+[
+  {
+    "slug": "task-review",
+    "title": "让 AI 修改任务，也让修改可以被审核",
+    "category": "开发记录",
+    "summary": "日志清单里的自然语言入口、操作日志与恢复预览，为什么要放在同一条流程里。",
+    "tags": [
+      "AI",
+      "工程实践"
+    ],
+    "date": "2026-10-26",
+    "readingMinutes": 3,
+    "sections": [
+      {
+        "id": "section-0",
+        "title": "从一句话到一次修改",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "日志清单最初处理的是手动录入的任务。加入自然语言后，输入变得灵活，结果却需要更清楚地被展示：模型理解了什么、打算改哪些任务、实际完成了哪些修改。"
+          },
+          {
+            "kind": "paragraph",
+            "text": "目前项目把模型运行放进单独的审核流程，让用户在邮箱式页面中查看并确认或驳回。"
+          }
+        ]
+      },
+      {
+        "id": "section-1",
+        "title": "共用一套规则",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "人工和 AI 修改经过相同的任务规则与日志入口。这样，非空标题、日期与完成状态的检查，不会因为输入来自模型就绕过。"
+          },
+          {
+            "kind": "code",
+            "language": "text",
+            "code": "人工 / AI 输入 → 领域规则 → 日志与任务"
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "title": "恢复先于覆盖",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "恢复预览的意义，是在实际修改之前看清结果。项目保存权威逆向快照和任务版本，恢复前检查当前文件是否仍匹配预期状态。遇到外部变化时停止，比直接写回旧文件更可控。"
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "title": "仍然要面对的边界",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "当前使用 JSON 持久化与单写入进程，能够处理部分进程或 I/O 中断，但不代表具备任意断电、磁盘故障或共享文件系统下的事务保证。后续数据库与同步方案仍需要单独设计。"
+          },
+          {
+            "kind": "paragraph",
+            "text": "查看日志清单项目 →"
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "查看日志清单项目 →",
+                "href": "/projects/task-log/"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "agent-tools",
+    "title": "把一条创作流程拆成 Agent 的工具",
+    "category": "开发记录",
+    "summary": "从秀米排版到 Minecraft MOD，记录两个 Agent 项目里相似的工具组织方式。",
+    "tags": [
+      "Agent",
+      "Python"
+    ],
+    "date": "2026-10-26",
+    "readingMinutes": 3,
+    "sections": [
+      {
+        "id": "section-0",
+        "title": "先看完整任务",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "秀米创作与 MOD 开发看似相距很远，但它们都需要跨越多个步骤。前者要写稿、排版、配图与保存；后者要组织代码和资源、调用构建、阅读错误与测试输出。"
+          }
+        ]
+      },
+      {
+        "id": "section-1",
+        "title": "工具应该有明确边界",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "在 xiumi-agent 中，浏览器、登录与编辑器能力按插件拆分。MOD Forge 则把领域知识、文件操作、构建与测试能力接到核心循环中。"
+          },
+          {
+            "kind": "paragraph",
+            "text": "共同的想法是：让一次工具调用对应一个可以解释的动作，也让动作的结果能回到下一次决策里。"
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "title": "结果需要能被检查",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "排版任务可以检查草稿，代码任务可以检查构建回执与产物。仅仅生成一段文本，并不意味着真正完成了原始需求。"
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "title": "继续打磨的部分",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "浏览器页面会变化，构建环境也会变化。选择器集中管理、工具链版本约束与明确的失败输出，都是在给后续维护留下路径。"
+          },
+          {
+            "kind": "paragraph",
+            "text": "xiumi-agent →　MOD Forge →"
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "xiumi-agent →",
+                "href": "/projects/xiumi/"
+              },
+              {
+                "label": "MOD Forge →",
+                "href": "/projects/mod-forge/"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "os-reading",
+    "title": "沿着调度路径，阅读 FreeRTOS 与 Linux",
+    "category": "系统学习",
+    "summary": "从源码地图出发，整理固定优先级、虚拟运行时间和上下文切换的阅读线索。",
+    "tags": [
+      "操作系统",
+      "C"
+    ],
+    "date": "2026-10-18",
+    "readingMinutes": 4,
+    "sections": [
+      {
+        "id": "section-0",
+        "title": "从具体机制提问",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "操作系统课程作业的题目是嵌入式操作系统与通用操作系统的区别。与其先罗列结论，我更希望沿真实代码找到问题：就绪队列如何组织、任务如何被选中、切换时又保存了什么。"
+          }
+        ]
+      },
+      {
+        "id": "section-1",
+        "title": "FreeRTOS 阅读线索",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "本地源码地图从 list.c 与 tasks.c 出发，跟踪就绪队列、优先级选择、tick 驱动的唤醒与抢占，再看 Cortex-M 端口中的 PendSV 上下文切换。"
+          },
+          {
+            "kind": "code",
+            "language": "text",
+            "code": "就绪队列与优先级\n    → tick 更新任务状态\n    → 调度选择\n    → PendSV 保存与恢复上下文"
+          },
+          {
+            "kind": "paragraph",
+            "text": "这些路径帮助理解“确定性”背后的实现选择。具体优化会受端口与配置影响，不能把某一个端口的实现当成所有系统的规则。"
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "title": "Linux 阅读线索",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "另一侧从 kernel/sched 的调度类选择与 fair.c 入手，关注运行时间记账、虚拟运行时间和 EEVDF 相关路径。阅读重点是如何在不同负载之间组织公平与延迟，而不只是比较代码体量。"
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "title": "当前进度",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "已整理源码地图与中文骨架，并对调度、内核体量、内存与分配策略收集了阅读材料。个人分析和英文终稿仍需继续完善。"
+          },
+          {
+            "kind": "paragraph",
+            "text": "这是课程源码阅读记录，依据本地检出的源码与笔记整理，不作为跨版本的内核技术文档。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "rope-notes",
+    "title": "RoPE 算子：把数值精度当作实现的一部分",
+    "category": "系统学习",
+    "summary": "从赛题约束中整理形状、精度、数据对齐和设备验证这几件事。",
+    "tags": [
+      "Ascend C",
+      "算子"
+    ],
+    "date": "2026-10-26",
+    "readingMinutes": 3,
+    "sections": [
+      {
+        "id": "section-0",
+        "title": "公式之外的约束",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "旋转位置编码的数学表达很紧凑，落到设备代码里，还要处理形状、数据类型、搬运与并行划分。项目的输入包括特征张量、位置索引和 theta，输出要保留输入形状。"
+          }
+        ]
+      },
+      {
+        "id": "section-1",
+        "title": "中间计算精度",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "赛题资料要求逆频率和三角函数生成使用 FP32。长位置索引会放大角度计算中的误差，因此代码里不仅要考虑乘加，也要认真处理角度与三角函数。"
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "title": "数据对齐与任务划分",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "局部维度不总是刚好对齐。当前实现分别考虑对齐和非对齐路径，尝试复用三角函数结果，并按行把任务分配给多个核心。"
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "title": "把验证状态写清楚",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "已有实现和参考脚本，但在没有设备编译、精度测试和性能数据之前，仍应把它视为待验证的实现草稿。后续记录应以真实测试输出为依据。"
+          },
+          {
+            "kind": "paragraph",
+            "text": "查看算子项目与验证状态 →"
+          },
+          {
+            "kind": "links",
+            "items": [
+              {
+                "label": "查看算子项目与验证状态 →",
+                "href": "/projects/rope/"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "march-learning",
+    "title": "三月学习摘记：在课表之间往前一点",
+    "category": "学习随记",
+    "summary": "多重积分、曲线曲面积分、角动量和程序设计作业，来自三月学习日记的几段摘录。",
+    "tags": [
+      "数学",
+      "学习记录"
+    ],
+    "date": "2026-03-30",
+    "readingMinutes": 2,
+    "sections": [
+      {
+        "id": "section-0",
+        "title": "从记录开始",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "三月开始写学习日记。最朴素的用途，就是记下今天读到哪里、遇到了什么，以及明天还要继续什么。"
+          }
+        ]
+      },
+      {
+        "id": "section-1",
+        "title": "三月摘记",
+        "blocks": [
+          {
+            "kind": "list",
+            "items": [
+              "03.11花了不少时间完成程序设计作业，也继续读高等微积分。",
+              "03.15读完多重积分部分，准备进入曲线曲面积分；物理继续看角动量。",
+              "03.19读到 Stokes、Gauss、Green 公式，开始体会散度与旋度之间的联系。",
+              "03.24完成振动与波动部分的学习。",
+              "03.30完成常数项级数的阶段目标，继续进入函数项级数。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "title": "留一点真实的余地",
+        "blocks": [
+          {
+            "kind": "paragraph",
+            "text": "日记里也有忙碌、休息和没有进展的日子。把这些一起留下来，学习记录才不只是完成清单。"
+          },
+          {
+            "kind": "paragraph",
+            "text": "以上按原学习日记摘编，保留日期，对口语表达做了简短整理。"
+          }
+        ]
+      }
+    ]
+  }
+]
