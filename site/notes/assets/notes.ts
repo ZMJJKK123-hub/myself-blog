@@ -12,7 +12,9 @@ const slug=location.pathname.split('/').filter(Boolean)[1];
 async function load():Promise<string>{
   if(slug&&slug!=='index.html'){
     const note=await app.api.note(decodeURIComponent(slug));
-    return '<p class="eyebrow">'+escape(note.category)+'</p><h1>'+escape(note.title)+'</h1><div class="article-meta"><span>'+icon('calendar')+'<time datetime="'+note.date+'">'+note.date.replaceAll('-','.')+'</time></span><span>'+icon('clock')+note.readingMinutes+' 分钟</span></div><p class="article-summary">'+escape(note.summary)+'</p>'+tags(note.tags)+sections(note.sections)+'<div class="article-end">— 记录于此，继续往前。—</div><p class="back-link"><a href="/notes/">← 返回全部笔记</a></p>';
+    // Hand-written HTML note bodies are owner-authored trusted markup (same trust level as editing source), like icons.
+    const body=note.html===null?sections(note.sections):'<div class="note-html">'+note.html+'</div>';
+    return '<p class="eyebrow">'+escape(note.category)+'</p><h1>'+escape(note.title)+'</h1><div class="article-meta"><span>'+icon('calendar')+'<time datetime="'+note.date+'">'+note.date.replaceAll('-','.')+'</time></span><span>'+icon('clock')+note.readingMinutes+' 分钟</span></div><p class="article-summary">'+escape(note.summary)+'</p>'+tags(note.tags)+body+'<div class="article-end">— 记录于此，继续往前。—</div><p class="back-link"><a href="/notes/">← 返回全部笔记</a></p>';
   }
   const data=await app.api.notes();
   const categories=[...new Set(data.items.map(item=>item.category))];

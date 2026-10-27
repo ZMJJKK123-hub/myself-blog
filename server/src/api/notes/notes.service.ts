@@ -11,7 +11,7 @@ export function createService(repository:NotesRepository):NotesService {
   const all=async():Promise<readonly NoteDetailDto[]>=>[...await repository.readAll()].sort((a,b)=>b.date.localeCompare(a.date));
   return { all,
     async list(category?:NoteCategory):Promise<ListDto<NoteSummaryDto>> {
-      const items=(await all()).filter(item=>category===undefined||item.category===category).map(({sections: _sections,...summary})=>summary);
+      const items=(await all()).filter(item=>category===undefined||item.category===category).map(({sections: _sections,html: _html,...summary})=>summary);
       return {items,total:items.length};
     },
     async get(slug:string):Promise<NoteDetailDto>{const item=(await all()).find(item=>item.slug===slug);if(!item)throw new BlogError('NOT_FOUND');return item;},

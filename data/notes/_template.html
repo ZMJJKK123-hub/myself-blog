@@ -1,0 +1,25 @@
+<!--
+title: 笔记标题（必填，120 字以内）
+category: 开发记录
+date: 2026-11-02
+tags: [标签一, 标签二]
+summary: 一句话摘要，显示在笔记列表里（可选，不写就取正文前 120 字）。
+readingMinutes: 6
+-->
+<h2>正文随便写</h2>
+<p>这是手写 HTML 笔记模板：上面 <code>&lt;!-- --&gt;</code> 注释里是元数据（title / category / date 必填），
+注释结束后整段就是你自己的 HTML，原样渲染，不会转义。</p>
+<p>常用标签：<strong>加粗</strong>、<em>斜体</em>、<a href="https://example.com">链接</a>、
+<code>行内代码</code>、<del>删除线</del>。</p>
+<ul>
+  <li>列表项</li>
+  <li>列表项</li>
+</ul>
+<blockquote><p>引用块，样式跟着整站走。</p></blockquote>
+<pre><code>// 围栏代码块渲染后右下角会有复制按钮
+const answer = 42;</code></pre>
+<p>也可以放表格、图片（图片要先放进 data/media/ 以 /media/xxx.webp 引用）、
+甚至内嵌 &lt;style&gt; 写一点笔记专属样式。</p>
+<p>使用方法：复制本文件 → 改名（小写字母数字短横线，如 my-first-note.html）→
+改元数据 → 写正文 → 保存刷新即发布。category 写任何新类别都会自动出现在筛选栏。
+下划线开头的文件不会被网站读取，可以当草稿。</p>

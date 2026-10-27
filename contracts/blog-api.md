@@ -10,7 +10,7 @@
 - slug：1～64 字符，正则 `^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$`。
 - 日期：真实公历 `YYYY-MM-DD`；不以宿主时区转换内容日期。
 - 外链只允许 `https:`；站内链接使用以 `/` 开头的站内路径，禁止协议相对 URL。
-- 内容正文是结构化块，禁止任意 HTML 或脚本。前端用文本节点与有限元素渲染。
+- 内容正文是结构化块，禁止任意 HTML 或脚本。前端用文本节点与有限元素渲染。唯一例外：手写 HTML 笔记的正文（`NoteDetailDto.html`）是站长本人编写的可信标记，信任级别等同直接修改前端源码，原样渲染、不做转义或净化；其元数据仍走严格校验。
 - 分类参数省略表示全部。参数提供但为空、重复或出现未声明参数时返回 400。分类是自由文本标签（非空、≤40 字符），无匹配返回 200 空数组。
 - 不存在的合法 slug 返回 404；无匹配分类和无匹配搜索返回 200 空数组。
 
@@ -85,6 +85,7 @@ interface NoteSummaryDto {
 }
 interface NoteDetailDto extends NoteSummaryDto {
   readonly sections: readonly ContentSectionDto[];
+  readonly html: string | null; // 手写 HTML 笔记的可信正文；null 表示 Markdown 笔记走 sections。
 }
 interface PhotoDto {
   readonly id: Slug;
@@ -109,7 +110,7 @@ interface SearchResultDto {
 interface HealthDto { readonly status: 'ok'; readonly apiVersion: 'v1'; }
 ```
 
-所有字符串有长度上限：标题 120、摘要 500、正文块文本 10000、标签与分类 40；数组上限在实现配置中统一声明并同时用于内容校验，不能悄悄截断坏数据。Repository 内容不符合契约时作为不可用处理。
+所有字符串有长度上限：标题 120、摘要 500、正文块文本 10000、标签与分类 40、手写 HTML 笔记正文 50000；数组上限在实现配置中统一声明并同时用于内容校验，不能悄悄截断坏数据。Repository 内容不符合契约时作为不可用处理。
 
 ## 3. HTTP 接口表
 

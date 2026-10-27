@@ -6,15 +6,20 @@ import path from 'node:path';
 import type { Schema } from './schema.js';
 // BlogError maps corrupt/unreadable resources to a safe 503 at the HTTP boundary.
 import { BlogError } from './errors.js';
-// Markdown notes are authored per file in the data folder.
-import { parseNoteMarkdown } from './markdown.js';
+// Notes are authored per file in the data folder, as Markdown or hand-written HTML.
+import { parseHtmlNote, parseNoteMarkdown } from './markdown.js';
 
 /** Only these curated resources are readable by the content adapter. */
 export type ContentResource = 'profile'|'projects'|'notes'|'life';
 /** Infrastructure port; services receive feature repositories rather than this concrete adapter. */
 export interface ContentSource { read<T>(resource:ContentResource,schema:Schema<T>):Promise<T>; }
 /** Collection resources read one item per file; '.'/'_' prefixed files are templates/drafts and skipped. */
-const directoryResources:Readonly<Record<string,string>> = {projects:'.json',notes:'.md'};
+const directoryExtensions:Readonly<Record<string,readonly string[]>> = {projects:['.json'],notes:['.md','.html']};
+/** Per-collection file decoders stay adapter-internal; the filename (minus extension) is the slug. */
+const collectionParsers:Readonly<Record<string,(base:string,extension:string,raw:string)=>{slug?:unknown}>> = {
+  projects:(_base,_extension,raw)=>JSON.parse(raw) as {slug?:unknown},
+  notes:(base,extension,raw)=>extension==='.html' ? {slug:base,sections:[],...parseHtmlNote(raw)} : {slug:base,html:null,...parseNoteMarkdown(raw)},
+};
 
 /**
  * Read validated content without scanning desktop or exposing paths.
@@ -26,12 +31,12 @@ export class JsonContentSource implements ContentSource {
   /**
    * Args: fixed resource identifier and its entity decoder. Returns: validated entity or collection.
    * Boundaries: oversized, missing, malformed and schema-invalid files become CONTENT_UNAVAILABLE.
-   * Globals Used: directoryResources. Calls: readSingle, readCollection, Schema.parse.
+   * Globals Used: directoryExtensions. Calls: readSingle, readCollection, Schema.parse.
    */
   async read<T>(resource:ContentResource,schema:Schema<T>):Promise<T> {
     try {
-      const extension = directoryResources[resource];
-      const value = extension===undefined ? await this.readSingle(resource+'.json') : await this.readCollection(resource,extension);
+      const extensions = directoryExtensions[resource];
+      const value = extensions===undefined ? await this.readSingle(resource+'.json') : await this.readCollection(resource,extensions);
       return schema.parse(value) as T;
     }catch(cause){throw new BlogError('CONTENT_UNAVAILABLE',cause,resource);}
   }
@@ -41,19 +46,23 @@ export class JsonContentSource implements ContentSource {
     return JSON.parse(raw) as unknown;
   }
   /**
-   * Args: resource folder name and item file extension. Returns: parsed items in filename order.
-   * Boundaries: every file must declare the slug matching its name; templates/drafts are skipped.
-   * Globals Used: this.root. Calls: readdir, readCapped, JSON.parse, parseNoteMarkdown.
+   * Args: resource folder name and accepted item extensions. Returns: parsed items in filename order.
+   * Boundaries: every item must declare the slug matching its filename; templates/drafts are skipped.
+   * Globals Used: collectionParsers, this.root. Calls: readdir, readCapped, collection parsers.
    */
-  private async readCollection(resource:string,extension:string):Promise<unknown[]> {
+  private async readCollection(resource:string,extensions:readonly string[]):Promise<unknown[]> {
+    const parser = collectionParsers[resource];
+    if(parser===undefined)throw new TypeError('Unknown collection resource');
     const dir = path.join(this.root,resource);
     const entries = await readdir(dir,{withFileTypes:true});
-    const names = entries.filter(entry=>entry.isFile()&&!entry.name.startsWith('.')&&!entry.name.startsWith('_')&&entry.name.endsWith(extension)).map(entry=>entry.name).sort();
+    const names = entries.filter(entry=>entry.isFile()&&!entry.name.startsWith('.')&&!entry.name.startsWith('_')&&extensions.some(extension=>entry.name.endsWith(extension))).map(entry=>entry.name).sort();
     const items:unknown[] = [];
     for(const name of names){
+      const extension = extensions.find(candidate=>name.endsWith(candidate));
+      if(extension===undefined)continue;
       const base = name.slice(0,-extension.length);
       const raw = await this.readCapped(path.join(dir,name));
-      const parsed = extension==='.md' ? {slug:base,...parseNoteMarkdown(raw)} : JSON.parse(raw) as {slug?:unknown};
+      const parsed = parser(base,extension,raw);
       if(typeof parsed.slug!=='string'||parsed.slug!==base)throw new TypeError(`文件 ${resource}/${name} 的 slug 与文件名不一致`);
       items.push(parsed);
     }

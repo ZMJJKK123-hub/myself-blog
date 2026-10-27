@@ -2,6 +2,8 @@
 import type {SearchRepository} from './search.repository.js';
 // Blocks are flattened only for searching, without evaluating markup.
 import type {SearchResultDto,ListDto,ContentSectionDto} from './search.dto.js';
+// Hand-written HTML note bodies join the index as tag-stripped plain text.
+import {htmlToText} from '../../common/markdown.js';
 // The service defends query bounds for callers outside HTTP as well.
 import {BlogError} from '../../common/errors.js';
 export interface SearchService {search(query:string):Promise<ListDto<SearchResultDto>>;}
@@ -17,7 +19,7 @@ export function createService(repository:SearchRepository,limit:number):SearchSe
     const tokens=normalize(cleaned).split(/\s+/u);const content=await repository.read();
     const entries=[
       ...content.projects.map(p=>({type:'project' as const,title:p.title,href:'/projects/'+p.slug+'/',text:p.summary+' '+p.tags.join(' ')+' '+flatten(p.sections)})),
-      ...content.notes.map(p=>({type:'note' as const,title:p.title,href:'/notes/'+p.slug+'/',text:p.summary+' '+p.tags.join(' ')+' '+flatten(p.sections)})),
+      ...content.notes.map(p=>({type:'note' as const,title:p.title,href:'/notes/'+p.slug+'/',text:p.summary+' '+p.tags.join(' ')+' '+flatten(p.sections)+(p.html===null?'':' '+htmlToText(p.html))})),
       {type:'page' as const,title:'关于'+content.profile.name,href:'/about/',text:content.profile.tagline+' '+flatten(content.profile.sections)},
       {type:'page' as const,title:'校园与生活',href:'/life/',text:content.life.photos.map(p=>p.title+' '+p.category).join(' ')+' '+flatten(content.life.sections)},
     ];

@@ -10,7 +10,7 @@
 | --- | --- | --- |
 | `profile.json` | 关于我页 + 首页自我介绍 | 直接编辑 |
 | `projects/<slug>.json` | 项目档案，一个文件一个项目 | 复制 `_template.json` 改名（文件名必须等于里面的 `slug`）；`order` 数字控制展示顺序，越小越靠前 |
-| `notes/<slug>.md` | 学习笔记，一篇一个 Markdown 文件 | 复制 `_template.md` 改名（文件名就是网址） |
+| `notes/<slug>.md` 或 `<slug>.html` | 学习笔记，一篇一个文件 | 复制 `_template.md`（Markdown）或 `_template.html`（手写 HTML）改名（文件名就是网址） |
 | `life.json` | 校园与生活页的文字和照片清单 | 直接编辑 |
 | `media/*.webp` | 照片文件 | 放文件 + 在 `life.json` 登记（见 `media/README.txt`） |
 
@@ -26,10 +26,18 @@
 
 只有 `status`（项目状态）仍是固定三选一：`持续开发` / `已有实现` / `早期作品`。
 
+## 笔记的三种写法
+
+1. **Markdown**（`_template.md`）：省事，格式固定（章节/列表/代码块/引用）。
+2. **手写 HTML**（`_template.html`）：完全自由，开头一段 `<!-- -->` 注释写元数据，正文任何 HTML 原样渲染（不转义）。想从别处导出的网页内容直接贴进来就行。
+3. **草稿**：文件名以 `_` 开头即被跳过。
+
+两种格式可以在 `notes/` 里混用，列表按日期统一排序。
+
 ## 常见格式错误
 
-- 笔记缺少 `---` 头部信息，或头部缺 `title` / `category` / `date`
-- 笔记正文用了 `# ` 一级标题（正文标题请用 `## `）
+- 笔记缺少元数据（Markdown 的 `---` 头 / HTML 的 `<!-- -->` 注释），或缺 `title` / `category` / `date`
+- Markdown 正文用了 `# ` 一级标题（正文标题请用 `## `）
 - 项目文件名和 JSON 里的 `slug` 不一致
 - `repositoryUrl` 不是 https:// 开头（没有就写 `null`）
 - 日期不是 `YYYY-MM-DD` 格式

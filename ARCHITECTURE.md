@@ -144,7 +144,7 @@ createRepository(注入的内容源/媒体目录与字节限制) 返回 NotesRep
 
 ## server/src/api/notes/notes.service.ts
 
-createService(仓储接口) 返回NotesService，仅依赖抽象。list(category)、get(slug)、all() 的参数含义分别为筛选分类、记录标识或查询文字，未列出的无参；返回 列表 ListDto<NoteSummaryDto>，详情 NoteDetailDto Promise。规则：all 返回按日期倒序的副本；同日期保持原顺序；list 过滤并移除正文；get 找不到抛404。仓储失败向外传播，不用空集合遮掩失败，不读写文件、不打印日志。
+createService(仓储接口) 返回NotesService，仅依赖抽象。list(category)、get(slug)、all() 的参数含义分别为筛选分类、记录标识或查询文字，未列出的无参；返回 列表 ListDto<NoteSummaryDto>，详情 NoteDetailDto Promise。规则：all 返回按日期倒序的副本；同日期保持原顺序；list 过滤并移除正文（sections 与手写 HTML）；get 找不到抛404。仓储失败向外传播，不用空集合遮掩失败，不读写文件、不打印日志。
 
 ## server/src/api/profile/profile.controller.ts
 
@@ -210,7 +210,7 @@ createRepository(注入的只读服务或探针) 返回 SearchRepository。read(
 
 ## server/src/api/search/search.service.ts
 
-createService(仓储接口,结果数量上限) 返回SearchService，仅依赖抽象。search(query) 的参数含义分别为筛选分类、记录标识或查询文字，未列出的无参；返回 ListDto<SearchResultDto> Promise。规则：NFKC与小写归一、空白拆词取交集；标题全词命中优先；稳定排序并限制条数；空命中items=[]，无效输入400。仓储失败向外传播，不用空集合遮掩失败，不读写文件、不打印日志。flatten(内容节)返回包含标题/内容块的纯文本，空节返回空串；normalize(文字)返回NFKC小写；两者不产生I/O。
+createService(仓储接口,结果数量上限) 返回SearchService，仅依赖抽象。search(query) 的参数含义分别为筛选分类、记录标识或查询文字，未列出的无参；返回 ListDto<SearchResultDto> Promise。规则：NFKC与小写归一、空白拆词取交集；标题全词命中优先；稳定排序并限制条数；空命中items=[]，无效输入400；手写 HTML 笔记正文经去标签纯文本进入索引。仓储失败向外传播，不用空集合遮掩失败，不读写文件、不打印日志。flatten(内容节)返回包含标题/内容块的纯文本，空节返回空串；normalize(文字)返回NFKC小写；两者不产生I/O。
 
 ## server/src/app.module.ts
 
@@ -218,7 +218,7 @@ createApp(已验证配置,logger) 返回尚未监听的 Node Server。实例化�
 
 ## server/src/common/content-source.ts
 
-JsonContentSource(已配置绝对根目录,最大字节数) 实现 ContentSource；只允许 profile/projects/notes/life 固定资源。read(资源名,Schema) 返回已验证数据 Promise。profile/life 读取单文件 JSON；projects/notes 读取目录内全部 .json/.md（按文件名排序，跳过 . 与 _ 前缀），笔记逐篇经 markdown 解析，文件名必须等于内容 slug，目录缺失、stat 超限、读取、解析或字段错误统一抛 CONTENT_UNAVAILABLE，保留 cause 与安全资源名。读取前后均校验大小，不写文件。错误最终记录 request_failed。实际影响：读取 contentDir 下 data 结构对应文件，无写入。
+JsonContentSource(已配置绝对根目录,最大字节数) 实现 ContentSource；只允许 profile/projects/notes/life 固定资源。read(资源名,Schema) 返回已验证数据 Promise。profile/life 读取单文件 JSON；projects/notes 读取目录（按文件名排序，跳过 . 与 _ 前缀），projects 接受 .json，notes 接受 .md（Markdown 解析）与 .html（手写 HTML 笔记解析），文件名必须等于内容 slug，目录缺失、stat 超限、读取、解析或字段错误统一抛 CONTENT_UNAVAILABLE，保留 cause 与安全资源名。读取前后均校验大小，不写文件。错误最终记录 request_failed。实际影响：读取 contentDir 下 data 结构对应文件，无写入。
 
 ## server/src/common/contracts.ts
 
@@ -240,7 +240,11 @@ JsonLogger 无可变业务状态，info(安全上下文) 写 INFO，warning(安�
 
 ## server/src/common/markdown.ts
 
-parseNoteMarkdown(笔记文件全文) 返回不含 slug 的元数据与内容节。头部信息为「---」包裹的 key: value 行：title/category/date 必填，tags 支持 [a, b] 或单值，summary 缺省取正文第一段（截断 120 字符加省略号），readingMinutes 缺省按正文约 400 字/分钟估算（1–120）。正文行块语法：「## 」开启章节（首个章节前的正文归入 id=intro、标题「开篇」），连续「- 」为列表，「> 」为 callout（标题固定「注」），围栏 ``` 为代码块；「# / ###」与未闭合围栏抛 TypeError，未知/重复/缺失头部字段抛 TypeError。所有错误由 ContentSource 包装为 CONTENT_UNAVAILABLE，消息含具体原因，不进入响应。纯解析，无 I/O 与日志。
+笔记文件的两种作者格式都在此解析。共享元数据语法：Markdown 用「---」包裹的 key: value 行，HTML 笔记用首个 `<!-- -->` 注释；title/category/date 必填，tags 支持 [a, b] 或单值，summary 缺省取正文前 120 字符（加省略号），readingMinutes 缺省按正文约 400 字/分钟估算（1–120）。未知/重复/缺失头部字段抛 TypeError。
+
+parseNoteMarkdown(文件全文) 另按行块语法解析正文：「## 」开启章节（首章节前正文归入 id=intro、标题「开篇」），连续「- 」为列表，「> 」为 callout（标题固定「注」），围栏 ``` 为代码块；「# / ###」与未闭合围栏抛 TypeError。
+
+parseHtmlNote(文件全文) 把注释后的整段作为可信 HTML 原样返回（不转义不净化，信任级别等同源码修改）；正文为空抛 TypeError。htmlToText(可信 HTML) 返回去标签、解码实体的纯文本，供摘要缺省与搜索索引使用，绝不作为标记渲染。所有错误由 ContentSource 包装为 CONTENT_UNAVAILABLE，消息含具体原因，不进入响应。纯解析，无 I/O 与日志。
 
 ## server/src/common/rss.ts
 
@@ -377,7 +381,7 @@ projectCard(项目摘要,是否紧凑) 返回详情链接；noteRow(笔记摘要
 
 ## site/assets/js/types/schema.ts
 
-本地解码原语，不导入后端。text(max,allowEmpty) 返回字符长度/非空校验器；enumeration(合法值) 返回枚举校验器；integer(下限,上限) 只接受范围内整数；array(元素校验器,最大数量) 接受空数组，拒绝超量或坏元素；nullable(校验器) 允许 null；object(字段表) 拒绝缺失、额外、非对象字段；refine(校验器,断言) 追加约束。以上返回 Schema，parse(未知输入) 返回强类型值或抛 TypeError。slug/date/href 校验器分别处理标识、真实日期和安全链接；LIMITS 为 title=120、summary=500、text=10000、tag=40、array=200、sections=30。无请求和日志；异常由 HTTP 适配器映射为契约错误。
+本地解码原语，不导入后端。text(max,allowEmpty) 返回字符长度/非空校验器；enumeration(合法值) 返回枚举校验器；integer(下限,上限) 只接受范围内整数；array(元素校验器,最大数量) 接受空数组，拒绝超量或坏元素；nullable(校验器) 允许 null；object(字段表) 拒绝缺失、额外、非对象字段；refine(校验器,断言) 追加约束。以上返回 Schema，parse(未知输入) 返回强类型值或抛 TypeError。slug/date/href 校验器分别处理标识、真实日期和安全链接；LIMITS 为 title=120、summary=500、text=10000、tag=40、array=200、sections=30、html=50000。无请求和日志；异常由 HTTP 适配器映射为契约错误。
 
 ## site/index/assets/index.ts
 
@@ -407,7 +411,7 @@ show(相对序号) 返回 void：空集合不做事；序号在当前结果中�
 
 ## site/notes/assets/notes.ts
 
-加载路径决定列表或详情。load() 无参数，返回 HTML Promise：列表 GET /notes 全量，类别按钮由列表动态派生，点击在客户端筛选并重渲染（不触发请求），「全部」清除选择；空集合显示“这个分类还没有笔记。”；详情 GET /notes/{slug}，显示内容块、日期、阅读时长和标签。
+加载路径决定列表或详情。load() 无参数，返回 HTML Promise：列表 GET /notes 全量，类别按钮由列表动态派生，点击在客户端筛选并重渲染（不触发请求），「全部」清除选择；空集合显示“这个分类还没有笔记。”；详情 GET /notes/{slug}，显示内容块、日期、阅读时长和标签——手写 HTML 笔记（html 非 null）的正文为站长可信标记，包在 .note-html 容器中直接渲染，不做转义；两种笔记的 pre 都获得复制按钮。
 
 wireCode() 在渲染后给每个 pre 添加复制按钮，返回 void。点击时从 code 读取文字，调用 clipboard.writeText；成功按钮为“已复制”；剪贴板缺失或拒绝时为“复制失败”并 WARNING。未请求后端。其余页面错误由共享 run 处理并 ERROR；本页不挂全局接口。
 

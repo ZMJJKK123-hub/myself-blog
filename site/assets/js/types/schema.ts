@@ -1,7 +1,7 @@
 /** Decoder contract keeps unknown values confined to I/O boundaries. */
 export interface Schema<T> { parse(value: unknown): T; }
 /** Content format limits are shared by every server entity decoder. */
-export const LIMITS = Object.freeze({title:120, summary:500, text:10000, tag:40, array:200, sections:30});
+export const LIMITS = Object.freeze({title:120, summary:500, text:10000, tag:40, array:200, sections:30, html:50000});
 
 /** Args: maximum code points and whether empty text is allowed. Returns: string decoder; invalid data throws TypeError. Globals Used: None. Calls: Array.from. */
 export function text(max: number, allowEmpty: boolean = false): Schema<string> {

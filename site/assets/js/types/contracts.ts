@@ -33,7 +33,8 @@ export interface NoteSummaryDto {
   readonly slug:string; readonly title:string; readonly category:NoteCategory; readonly summary:string;
   readonly tags:readonly string[]; readonly date:string; readonly readingMinutes:number;
 }
-export interface NoteDetailDto extends NoteSummaryDto {readonly sections:readonly ContentSectionDto[];}
+/** Hand-written HTML note bodies are owner-authored trusted markup, never escaped at render time. */
+export interface NoteDetailDto extends NoteSummaryDto {readonly sections:readonly ContentSectionDto[]; readonly html:string|null;}
 export interface PhotoDto {
   readonly id:string; readonly title:string; readonly alt:string; readonly date:string; readonly category:PhotoCategory;
   readonly imageUrl:string; readonly width:number; readonly height:number;
@@ -75,7 +76,7 @@ const noteFields = {slug:slugSchema,title,category,summary,tags,date:dateSchema,
 export const projectSummarySchema:Schema<ProjectSummaryDto> = object<ProjectSummaryDto>(projectFields);
 export const projectSchema:Schema<ProjectDetailDto> = object<ProjectDetailDto>({...projectFields,sections:sectionsSchema});
 export const noteSummarySchema:Schema<NoteSummaryDto> = object<NoteSummaryDto>(noteFields);
-export const noteSchema:Schema<NoteDetailDto> = object<NoteDetailDto>({...noteFields,sections:sectionsSchema});
+export const noteSchema:Schema<NoteDetailDto> = object<NoteDetailDto>({...noteFields,sections:sectionsSchema,html:nullable(text(LIMITS.html))});
 export const photoSchema:Schema<PhotoDto> = object<PhotoDto>({id:slugSchema,title,alt:summary,date:dateSchema,category,
   imageUrl:refine(hrefSchema,value=>/^\/media\/[a-z0-9-]+\.webp$/.test(value)),width:integer(1,10000),height:integer(1,10000)});
 export const lifeSchema:Schema<LifeDto> = object<LifeDto>({photos:array(photoSchema),sections:sectionsSchema});

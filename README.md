@@ -32,7 +32,7 @@ npm run start:site
 | --- | --- |
 | `data/profile.json` | 个人介绍、方向、外链、最近在做 |
 | `data/projects/<slug>.json` | 项目档案，一个文件一个项目（文件名必须等于 slug） |
-| `data/notes/<slug>.md` | 学习笔记，一篇一个 Markdown 文件（文件名就是网址） |
+| `data/notes/<slug>.md` 或 `<slug>.html` | 学习笔记，一篇一个文件（文件名就是网址）：Markdown 或手写 HTML（正文原样渲染，不转义） |
 | `data/life.json` | 相册元数据与校园活动文字 |
 | `data/media/` | 压缩且不含原照片元数据的 WebP 图片 |
 
